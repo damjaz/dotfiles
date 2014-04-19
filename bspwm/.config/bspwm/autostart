@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# restore wallpaper
+imlibsetroot -s h ~/images/anime-girls/wallpaper-2952429.jpg & 
+
+# set cursor to arrow
+xsetroot -cursor_name left_ptr &
+
+# Detect and configure touchpad. See 'man synclient' for more info.
+if egrep -iq 'touchpad' /proc/bus/input/devices; then
+    synclient VertEdgeScroll=1 &
+    synclient TapButton1=1 &
+fi
+
+# Set keyboard settings
+# 250 ms delay and 25 cps (characters per second) repeat rate.
+# Adjust the values according to your preferances.
+xset r rate 250 25 &
+
+# Turn on/off system beep
+xset b off &
+
+# xflux
+xflux -l 50.102174 -g 18.54628 &
+
+# mouse accel off
+xinput set-prop 11 267 2 &
+xinput set-prop 11 269 1 &
+
+# start panel
+panel &

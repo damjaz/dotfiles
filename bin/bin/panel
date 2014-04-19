@@ -1,0 +1,66 @@
+#!/bin/bash
+
+if [ $(pgrep -cx panel) -gt 1 ] ; then
+  printf "%s\n" "The panel is already running." >&2
+  exit 1
+fi
+
+BARCMD="bar -g x$PANEL_HEIGHT -B#$COL0 -F#$COL15 -f terminus-12"
+
+panel_datetime() {
+  while true; do
+    pdate=$(date '+%A %d %B' | tr '[:upper:]' '[:lower:]')
+    ptime=$(date '+%H:%M')
+    echo "T$ptime"
+    echo "D$pdate"
+    sleep 1m
+  done
+}
+
+panel_battery() {
+  while true; do
+    bat=$(acpi -b | tr -d ' ,%[:alpha:]' | cut -d ':' -f 2)
+    echo "B$bat"
+    sleep 1m
+  done
+}
+
+panel_wintitle() {
+  while true; do
+    fid=$(bspc query -W -w focused)
+    name=""
+    if [ -n "$fid" ]; then
+      name=$(xprop WM_NAME -id $fid | cut -d '"' -f 2)
+      name="[$name]"
+    fi
+    echo "F$name"
+    sleep 1s
+  done
+}
+
+panel_wifi() {
+  while true; do
+    wlan="$(iwgetid | cut -d '"' -f 2)"
+    if [ -z "$wlan" ]; then
+      wlan="-"
+    fi
+    echo "I$wlan"
+    sleep 1s
+  done
+}
+
+# TODO: woot ? why is it here?
+trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+
+[ -e "$PANEL_FIFO" ] && rm "$PANEL_FIFO"
+mkfifo "$PANEL_FIFO"
+
+bspc control --subscribe > "$PANEL_FIFO" &
+panel_datetime > "$PANEL_FIFO" &
+panel_battery > "$PANEL_FIFO" &
+panel_wintitle > "$PANEL_FIFO" &
+panel_wifi > "$PANEL_FIFO" &
+
+cat "$PANEL_FIFO" | bar_msg_handler | $BARCMD &
+
+wait

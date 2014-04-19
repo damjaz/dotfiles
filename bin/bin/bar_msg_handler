@@ -1,0 +1,55 @@
+#!/bin/bash
+
+while read -r line; do
+  case $line in
+    T*)
+      # date and time
+      time="${line#?}"
+      ;;
+    D*)
+      # date and time
+      date="${line#?}"
+      ;;
+    B*)
+      battery="${line#?}"
+      ;;
+    I*)
+      wifi="${line#?}"
+      ;;
+    F*)
+      title="${line#?}"
+      ;;
+    W*)
+      # bspwm internal state
+      desktops=""
+      IFS=':'
+      set -- ${line#?}
+      while [ $# -gt 0 ] ; do
+        item=$1
+        name=${item#?}
+        case $item in
+          O*|F*|U*)
+            # focused 
+            desktops="$desktops%{B#ff$COL2} ${name} %{B-}"
+            ;;
+          o*)
+            # occupied unfocused
+            desktops="$desktops ${name} "
+            ;;
+          f*|u*)
+            # free unfocused
+            desktops="$desktops %{F#ff$COL8}${name}%{F-} "
+            ;;
+        esac
+        shift
+      done
+      ;;
+  esac
+  # format string and data
+  echo "%{l} $desktops\
+ %{F#ff$COL3}$title%{F-}\
+ %{r}%{F#ff$COL3}wifi %{F-}$wifi\
+ %{F#ff$COL3}battery %{F-}$battery\
+ %{F#ff$COL3}$date%{F-} $time "
+
+done
