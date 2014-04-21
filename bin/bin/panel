@@ -1,66 +1,122 @@
 #!/bin/bash
 
-if [ $(pgrep -cx panel) -gt 1 ] ; then
-  printf "%s\n" "The panel is already running." >&2
-  exit 1
-fi
+# load terminal colorscheme variables COL0 - COL15
+. colors-def
 
-BARCMD="bar -g x$PANEL_HEIGHT -B#$COL0 -F#$COL15 -f terminus-12"
+panel_cmd="bar -g x20 -B#$COL0 -F#$COL15 -f terminus-12"
 
-panel_datetime() {
-  while true; do
-    pdate=$(date '+%A %d %B' | tr '[:upper:]' '[:lower:]')
-    ptime=$(date '+%H:%M')
-    echo "T$ptime"
-    echo "D$pdate"
-    sleep 1m
-  done
+date_widget() {
+  local date=$(date '+%A %d %B')
+  echo "date:%{F#ff$COL3}${date,,}%{F-}"
 }
 
-panel_battery() {
-  while true; do
-    bat=$(acpi -b | tr -d ' ,%[:alpha:]' | cut -d ':' -f 2)
-    echo "B$bat"
-    sleep 1m
-  done
+time_widget() {
+  local time=$(date '+%H:%M')
+  echo "time:%{F#ff$COL3}$time%{F-}"
 }
 
-panel_wintitle() {
-  while true; do
-    fid=$(bspc query -W -w focused)
-    name=""
-    if [ -n "$fid" ]; then
-      name=$(xprop WM_NAME -id $fid | cut -d '"' -f 2)
-      name="[$name]"
+battery_widget() {
+  local battery_dir='/sys/class/power_supply/BAT0'
+  local battery_status=$(< "$battery_dir/status")
+  
+  case $battery_status in
+    Full|Charging)
+      battery_status="%{F#ff$COL3}${battery_status,,}%{F-}"
+    ;;
+    *)
+      local charge_now=$(< "$battery_dir/charge_now")
+      local charge_full=$(< "$battery_dir/charge_full")
+      local percents=$(( charge_now * 100 / charge_full ))
+      battery_status="%{F#ff$COL1}${battery_status,,} $percents%%%{F-}"
+    ;;
+  esac
+  echo "battery:$battery_status"
+}
+
+title_widget() {
+    local id="$(bspc query -W -w focused)"
+    local title=''
+    local delim='"'
+
+    if [[ "$id" ]]; then
+      title="$(xprop WM_NAME -id $id | cut -d $delim -f 2)"
     fi
-    echo "F$name"
-    sleep 1s
-  done
+    echo "title:%{F#ff$COL3}$title%{F-}"
 }
 
-panel_wifi() {
-  while true; do
-    wlan="$(iwgetid | cut -d '"' -f 2)"
-    if [ -z "$wlan" ]; then
-      wlan="-"
+wifi_widget() {
+    local ssid="$(iwgetid -r)"
+
+    if [[ "$ssid" ]]; then
+      ssid="%{F#ff$COL3}$ssid%{F-}"
+    else
+      ssid="%{F#ff$COL1}wifi off%{F-}"
     fi
-    echo "I$wlan"
-    sleep 1s
+    echo "wifi:$ssid"
+}
+
+desktops_widget() {
+  bspc control --subscribe | while read -r line; do
+    bspwm_status=(${line//:/ })
+    desktops=''
+    for field in "${bspwm_status[@]}"; do
+      case $field in
+        O*|U*|F*)
+          desktops+="%{B#ff$COL2} ${field#?} %{B-}"
+        ;;
+        o*|u*)
+          desktops+=" ${field#?} "
+        ;;
+        f*)
+          desktops+="%{F#ff$COL6} ${field#?} %{F-}"
+        ;;
+        *) ;;
+      esac
+    done
+    echo "desktops:$desktops"
   done
 }
 
-# TODO: woot ? why is it here?
-trap 'trap - TERM; kill 0' INT TERM QUIT EXIT
+widgets_format() {
+  while read -r line; do
+    case $line in
+      date*)
+        date="${line#*:}"
+      ;;
+      time*)
+        time="${line#*:}"
+      ;;
+      battery*)
+        battery="${line#*:}"
+      ;;
+      title*)
+        title="${line#*:}"
+      ;;
+      wifi*)
+        wifi="${line#*:}"
+      ;;
+      desktops*)
+        desktops="${line#*:}"
+      ;;
+      *) ;;
+    esac
+  
+    fmt="%{l}$desktops > $title"
+    fmt+="%{r}$wifi < $battery < $date < $time "
+    echo "$fmt"
+  done
+}
 
-[ -e "$PANEL_FIFO" ] && rm "$PANEL_FIFO"
-mkfifo "$PANEL_FIFO"
+# main
+{
+  desktops_widget &
+  while true; do
+    title_widget
+    wifi_widget
+    battery_widget
+    date_widget
+    time_widget
+    sleep 1
+  done &
+} | widgets_format | $panel_cmd &
 
-bspc control --subscribe > "$PANEL_FIFO" &
-panel_datetime > "$PANEL_FIFO" &
-panel_battery > "$PANEL_FIFO" &
-panel_wintitle > "$PANEL_FIFO" &
-panel_wifi > "$PANEL_FIFO" &
-
-cat "$PANEL_FIFO" | bar_msg_handler | $BARCMD &
-
-wait

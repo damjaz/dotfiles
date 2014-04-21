@@ -222,4 +222,4 @@ let g:ctrlp_cmd = 'CtrlP'
 
 
 let g:SuperTabDefaultCompletionType = "context"
-let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+"let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"

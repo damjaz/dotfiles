@@ -1,13 +1,15 @@
 #!/bin/bash
 
+. colors-def
+
 bspc monitor -d term web chat misc
 
-bspc config border_width 4
+bspc config border_width 1
 bspc config window_gap 8
 bspc config split_ratio 0.5
 bspc config borderless_monocle true
 bspc config gapless_monocle true
-bspc config top_padding $PANEL_HEIGHT
+bspc config top_padding 20
 
 # application rules
 bspc rule -a chromium desktop=web
