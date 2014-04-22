@@ -1,47 +1,65 @@
 #!/bin/bash
 
-# load terminal colorscheme variables COL0 - COL15
+# loads terminal colorscheme variables COL0 - COL15
 . colors-def
+
+# kills children jobs on exit, not sure if it's valid
+trap 'kill 0' HUP INT QUIT TERM EXIT
 
 panel_cmd="bar -g x20 -B#$COL0 -F#$COL15 -f terminus-12"
 
 date_widget() {
-  local date=$(date '+%A %d %B')
+  local date="$(date '+%A %d %B')"
+
   echo "date:%{F#ff$COL3}${date,,}%{F-}"
 }
 
 time_widget() {
-  local time=$(date '+%H:%M')
+  local time="$(date '+%H:%M')"
+
   echo "time:%{F#ff$COL3}$time%{F-}"
 }
 
 battery_widget() {
-  local battery_dir='/sys/class/power_supply/BAT0'
-  local battery_status=$(< "$battery_dir/status")
-  
+  local battery_dir battery_status charge_now charge_full percents
+
+  battery_dir='/sys/class/power_supply/BAT0'
+  battery_status="$(< "$battery_dir/status")"
+  battery_status="${battery_status,,}"
+
   case $battery_status in
-    Full|Charging)
-      battery_status="%{F#ff$COL3}${battery_status,,}%{F-}"
-    ;;
+    *charging)
+      charge_now="$(< "$battery_dir/charge_now")"
+      charge_full="$(< "$battery_dir/charge_full")"
+      percents="$(( charge_now * 100 / charge_full ))"
+      battery_status="$battery_status $percents%%"
+      ;;&
+    full|charging)
+      battery_status="%{F#ff$COL3}$battery_status%{F-}"
+      ;;
     *)
-      local charge_now=$(< "$battery_dir/charge_now")
-      local charge_full=$(< "$battery_dir/charge_full")
-      local percents=$(( charge_now * 100 / charge_full ))
-      battery_status="%{F#ff$COL1}${battery_status,,} $percents%%%{F-}"
-    ;;
+      battery_status="%{F#ff$COL1}$battery_status%{F-}"
+      ;;
   esac
+
   echo "battery:$battery_status"
 }
 
 title_widget() {
-    local id="$(bspc query -W -w focused)"
-    local title=''
-    local delim='"'
+  local line id title
 
-    if [[ "$id" ]]; then
-      title="$(xprop WM_NAME -id $id | cut -d $delim -f 2)"
+  xprop -spy -root ':$0\n' _NET_ACTIVE_WINDOW | while read -r line; do
+    id="${line#*:}"
+    title="$(xprop -id $id _NET_WM_NAME 2>/dev/null)"
+
+    if [[ "$title" ]]; then
+      title="${title#*\"}"
+      title="${title%?}"
+      title="%{F#ff$COL3}$title%{F-}"
     fi
-    echo "title:%{F#ff$COL3}$title%{F-}"
+
+    echo "title:$title"
+  done
 }
 
 wifi_widget() {
@@ -50,59 +68,55 @@ wifi_widget() {
     if [[ "$ssid" ]]; then
       ssid="%{F#ff$COL3}$ssid%{F-}"
     else
-      ssid="%{F#ff$COL1}wifi off%{F-}"
+      ssid="%{F#ff$COL1}off%{F-}"
     fi
+
     echo "wifi:$ssid"
 }
 
 desktops_widget() {
+  local line bspwm_status desktops field
+
   bspc control --subscribe | while read -r line; do
     bspwm_status=(${line//:/ })
     desktops=''
+
     for field in "${bspwm_status[@]}"; do
       case $field in
         O*|U*|F*)
           desktops+="%{B#ff$COL2} ${field#?} %{B-}"
-        ;;
+          ;;
         o*|u*)
-          desktops+=" ${field#?} "
-        ;;
+          desktops+="%{F#ff$COL15} ${field#?} %{F-}"
+          ;;
         f*)
           desktops+="%{F#ff$COL6} ${field#?} %{F-}"
-        ;;
-        *) ;;
+          ;;
+        *) ;; # does nothing for non-desktop fields
       esac
     done
+
     echo "desktops:$desktops"
   done
 }
 
 widgets_format() {
+  local date time battery title wifi desktops fmt line
+
   while read -r line; do
     case $line in
-      date*)
-        date="${line#*:}"
-      ;;
-      time*)
-        time="${line#*:}"
-      ;;
-      battery*)
-        battery="${line#*:}"
-      ;;
-      title*)
-        title="${line#*:}"
-      ;;
-      wifi*)
-        wifi="${line#*:}"
-      ;;
-      desktops*)
-        desktops="${line#*:}"
-      ;;
+      date*)      date="${line#*:}" ;;
+      time*)      time="${line#*:}" ;;
+      battery*)   battery="${line#*:}" ;;
+      title*)     title="${line#*:}" ;;
+      wifi*)      wifi="${line#*:}" ;;
+      desktops*)  desktops="${line#*:}" ;;
       *) ;;
     esac
   
-    fmt="%{l}$desktops > $title"
-    fmt+="%{r}$wifi < $battery < $date < $time "
+    fmt="%{l}$desktops [ $title ]"
+    fmt+="%{r} [ wifi $wifi ] [ bat $battery ] $date, $time "
+
     echo "$fmt"
   done
 }
@@ -110,8 +124,9 @@ widgets_format() {
 # main
 {
   desktops_widget &
+  title_widget &
+
   while true; do
-    title_widget
     wifi_widget
     battery_widget
     date_widget
@@ -120,3 +135,4 @@ widgets_format() {
   done &
 } | widgets_format | $panel_cmd &
 
+wait

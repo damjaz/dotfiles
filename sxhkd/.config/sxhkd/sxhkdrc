@@ -8,17 +8,41 @@ super + alt + Escape
 super + w
 	bspc window -c
 
-super + f
-  bspc window focused -t floating
+super + {_, shift} + f
+  bspc window focused -t {floating, fullscreen}
 
-super + {1-9,0}
-	bspc desktop -f ^{1-9,10}
+super + s ; {1-9, 0}
+  bspc window focused -d ^{1-9, 10}
+
+super + s ; {Left, Right, Up, Down}
+  bspc window focused -s {left, right, up, down}
+
+super + {Left, Right, Up, Down, Tab, grave}
+  bspc window focused -f {left, right, up, down, next, prev}
+
+super + ctrl + {Left, Right, Up, Down} ; super + ctrl + {Up, Down}
+  bspc window focused -e {left, right, up, down} {+50, -50}
+
+super + shift + {Left, Right, Up, Down, End}
+  bspc window focused -p {left, right, up, down, cancel}
+
+super + shift + p ; {1-9}
+  bspc window focused -r 0.{1-9}
+
+super + {1-9, 0}
+	bspc desktop -f ^{1-9, 10}
+
+super + m
+  bspc desktop focused -l next
+
+super + {r, e, b, c}
+  bspc desktop focused -{R 90,E,B,C forward}
 
 ~button1
 	bspc pointer -g focus
 
 super + button{1-3}
-	bspc pointer -g {move,resize_side,resize_corner}
+	bspc pointer -g {move, resize_side, resize_corner}
 
 super + !button{1-3}
 	bspc pointer -t %i %i

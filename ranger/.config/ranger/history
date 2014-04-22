@@ -9,7 +9,11 @@ shell
 shell sudo make uninstall
 delete y
 mkdir bin
-delete
 open_with 
 rename colorscheme
 open_with vim
+mkidr x
+mkdir x
+rename X
+rename dunstrc
+delete

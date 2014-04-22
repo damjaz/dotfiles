@@ -16,3 +16,4 @@ bspc rule -a chromium desktop=web
 
 bspc config focused_border_color "#$COL9"
 bspc config normal_border_color "#$COL0"
+bspc config presel_border_color "#$COL1"

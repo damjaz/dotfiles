@@ -28,4 +28,4 @@ xinput set-prop 11 267 2 &
 xinput set-prop 11 269 1 &
 
 # start panel
-panel &
+{ sleep 2 && panel; } &
