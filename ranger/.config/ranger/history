@@ -9,11 +9,13 @@ shell
 shell sudo make uninstall
 delete y
 mkdir bin
-open_with 
 rename colorscheme
-open_with vim
 mkidr x
 mkdir x
 rename X
 rename dunstrc
+rename accu-overload
+./colortest
 delete
+open_with 
+open_with vim

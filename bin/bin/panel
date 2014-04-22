@@ -74,6 +74,17 @@ wifi_widget() {
     echo "wifi:$ssid"
 }
 
+mem_widget() {
+  local mem_used mem_free mem_array mem_total
+
+  mem_array=($(free -m))
+  mem_used="${mem_array[15]}"
+  mem_free="${mem_array[16]}"
+  mem_total="$(( mem_used + mem_free ))"
+
+  echo "memory:%{F#ff$COL3}$mem_used%{F-} / %{F#ff$COL3}$mem_total%{F-}"
+}
+
 desktops_widget() {
   local line bspwm_status desktops field
 
@@ -101,7 +112,7 @@ desktops_widget() {
 }
 
 widgets_format() {
-  local date time battery title wifi desktops fmt line
+  local date time battery title wifi desktops fmt line memory
 
   while read -r line; do
     case $line in
@@ -111,11 +122,12 @@ widgets_format() {
       title*)     title="${line#*:}" ;;
       wifi*)      wifi="${line#*:}" ;;
       desktops*)  desktops="${line#*:}" ;;
+      memory*)    memory="${line#*:}" ;;
       *) ;;
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} [ wifi $wifi ] [ bat $battery ] $date, $time "
+    fmt+="%{r} [ mem $memory ] [ wifi $wifi ] [ bat $battery ] $date, $time "
 
     echo "$fmt"
   done
@@ -127,6 +139,7 @@ widgets_format() {
   title_widget &
 
   while true; do
+    mem_widget
     wifi_widget
     battery_widget
     date_widget
