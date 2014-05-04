@@ -2,7 +2,7 @@
 
 . colors-def
 
-bspc monitor -d term web chat misc
+bspc monitor -d term web code misc
 
 bspc config border_width 1
 bspc config window_gap 8

@@ -4,7 +4,7 @@
 . colors-def
 
 # kills children jobs on exit, not sure if it's valid
-trap 'kill 0' HUP INT QUIT TERM EXIT
+trap 'kill 0' HUP INT TERM EXIT
 
 panel_cmd="bar -g x20 -B#$COL0 -F#$COL15 -f terminus-12"
 
@@ -75,14 +75,25 @@ wifi_widget() {
 }
 
 mem_widget() {
-  local mem_used mem_free mem_array mem_total
+  local mem_used mem_array mem_total
 
   mem_array=($(free -m))
   mem_used="${mem_array[15]}"
-  mem_free="${mem_array[16]}"
-  mem_total="$(( mem_used + mem_free ))"
+  mem_total="${mem_array[7]}"
 
   echo "memory:%{F#ff$COL3}$mem_used%{F-} / %{F#ff$COL3}$mem_total%{F-}"
+}
+
+spoj_widget() {
+  local spoj_data rank points
+
+  spoj_data=($(curl -s http://www.spoj.com/users/damianjazwic/ | head -n 167 |\
+               tail -n 2 | tr -d -c '[:digit:].\n>' | tr '>' ' '))
+  rank="${spoj_data[1]}"
+  points="${spoj_data[2]}"
+
+  echo "spoj:%{F#ff$COL3}$rank%{F-} / %{F#ff$COL3}${points}%{F-} pts"
+  echo "$(date '+%s') $rank $points" >> /var/log/spojrank.log
 }
 
 desktops_widget() {
@@ -112,7 +123,7 @@ desktops_widget() {
 }
 
 widgets_format() {
-  local date time battery title wifi desktops fmt line memory
+  local date time battery title wifi desktops fmt line memory spoj
 
   while read -r line; do
     case $line in
@@ -123,11 +134,12 @@ widgets_format() {
       wifi*)      wifi="${line#*:}" ;;
       desktops*)  desktops="${line#*:}" ;;
       memory*)    memory="${line#*:}" ;;
+      spoj*)      spoj="${line#*:}" ;;
       *) ;;
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} [ mem $memory ] [ wifi $wifi ] [ bat $battery ] $date, $time "
+    fmt+="%{r} [ spoj $spoj ] [ mem $memory ] [ wifi $wifi ] [ bat $battery ] $date, $time "
 
     echo "$fmt"
   done
@@ -145,6 +157,11 @@ widgets_format() {
     date_widget
     time_widget
     sleep 1
+  done &
+
+  while true; do
+    spoj_widget
+    sleep 1h
   done &
 } | widgets_format | $panel_cmd &
 

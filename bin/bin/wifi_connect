@@ -1,0 +1,7 @@
+#!/bin/bash
+#How to connect to a WPA/WPA2 WiFi network using Linux command line
+#This is a step-to-step guide for connecting to a WPA/WPA2 WiFi network via the Linux command line interface. The tools are:
+
+sudo ip link set wlan0 up
+sudo wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant.conf
+sudo dhclient wlan0

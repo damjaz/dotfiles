@@ -1,0 +1,6 @@
+#!/bin/bash
+
+while expr=$(xsel -o | dmenu -p 'calculate'); do
+  ans=$(bc -l -q <<< "scale=2;$expr")
+  echo -n "$ans" | xsel -i
+done

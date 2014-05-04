@@ -16,6 +16,6 @@ rename X
 rename dunstrc
 rename accu-overload
 ./colortest
-delete
-open_with 
 open_with vim
+open_with 
+delete

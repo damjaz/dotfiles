@@ -20,12 +20,12 @@ xset r rate 250 25 &
 # Turn on/off system beep
 xset b off &
 
-# xflux
-xflux -l 50.102174 -g 18.54628 &
-
 # mouse accel off
 xinput set-prop 11 267 2 &
 xinput set-prop 11 269 1 &
+
+# color temperature
+redshift -l 50.1:18.5 -t 6500:3300 &
 
 # start panel
 { sleep 2 && panel; } &
