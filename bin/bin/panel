@@ -114,7 +114,6 @@ desktops_widget() {
         f*)
           desktops+="%{F#ff$COL6} ${field#?} %{F-}"
           ;;
-        *) ;; # does nothing for non-desktop fields
       esac
     done
 
@@ -135,7 +134,6 @@ widgets_format() {
       desktops*)  desktops="${line#*:}" ;;
       memory*)    memory="${line#*:}" ;;
       spoj*)      spoj="${line#*:}" ;;
-      *) ;;
     esac
   
     fmt="%{l}$desktops [ $title ]"

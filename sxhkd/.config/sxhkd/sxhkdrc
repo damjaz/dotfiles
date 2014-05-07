@@ -8,6 +8,9 @@ super + alt + Escape
 super + w
   bspc window -c
 
+super + v
+  bspc control --toggle-visibility
+
 super + {_, shift} + f
   bspc window focused -t {floating, fullscreen}
 
