@@ -92,7 +92,8 @@ spoj_widget() {
   rank="${spoj_data[1]}"
   points="${spoj_data[2]}"
 
-  echo "spoj:%{F#ff$COL3}$rank%{F-} / %{F#ff$COL3}${points}%{F-} pts"
+  #echo "spoj:%{F#ff$COL3}$rank%{F-} / %{F#ff$COL3}${points}%{F-} pts"
+  echo "spoj:%{F#ff$COL3}$rank%{F-}"
   echo "$(date '+%s') $rank $points" >> /var/log/spojrank.log
 }
 
