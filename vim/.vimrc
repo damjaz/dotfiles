@@ -79,7 +79,7 @@ au WinEnter * set cursorline
 set t_Co=256
 set listchars=tab:\ \ ,trail:.
 set laststatus=2 " always show status line
-"set statusline=%F\ %m\ %{fugitive#statusline()}\ %y%=%l,%c\ %P "TODO: change
+"set statusline=[\ %F\ %m\ ]\ %{fugitive#statusline()}\ %y%=%l,%c\ %P "TODO: change
 set number " show line numbers
 set relativenumber
 set title
@@ -128,17 +128,6 @@ nnoremap ; :
 nmap <silent> <leader>/ :nohlsearch<CR>
 " remove trailing whitespaces
 map <silent> <F3> :%s/\s\+$//e<CR>
-" Easy window navigation
-map <C-left> <C-w>h
-map <C-down> <C-w>j
-map <C-up> <C-w>k
-map <C-right> <C-w>l
-
-" someday...
-"map <up> <nop>
-"map <down> <nop>
-"map <left> <nop>
-"map <right> <nop>
 
 
 "

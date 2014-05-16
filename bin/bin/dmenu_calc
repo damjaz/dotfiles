@@ -6,13 +6,14 @@ ans_hist=""
 expr_hist="scale=4"
 last_ans_len=0
 
-while expr=$(echo -e -n "$ans_hist" | dmenu -l 5 -p 'calculate'); do
+while expr=$(echo -e -n "$ans_hist" | dmenu -l 10 -p 'calculate'); do
   if [[ "$expr" = "copy" ]]; then
     echo -n "$ans" | xsel -b -i
     continue
   fi
 
   ans=$(echo -e "$expr_hist\n$expr" | bc -l 2>&1)
+  ans_hist="$expr\n$ans_hist"
 
   if [[ "$last_ans_len" -ne "${#ans}" ]]; then
     last_ans_len="${#ans}"
