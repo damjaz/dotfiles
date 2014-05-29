@@ -18,6 +18,8 @@ rename accu-overload
 ./colortest
 open_with vim
 open_with 
-delete
 sudo 
 sudo paste
+delete
+mkdir docs
+mkdir git-tests

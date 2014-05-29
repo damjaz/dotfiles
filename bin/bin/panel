@@ -9,7 +9,7 @@ trap 'kill 0' HUP INT TERM EXIT
 panel_cmd="bar -g x20 -B#$COL0 -F#$COL15 -f terminus-12"
 
 date_widget() {
-  local date="$(date '+%A %d %B')"
+  local date="$(date '+%d/%m/%y')"
 
   echo "date:%{F#ff$COL3}${date,,}%{F-}"
 }
@@ -81,7 +81,8 @@ mem_widget() {
   mem_used="${mem_array[15]}"
   mem_total="${mem_array[7]}"
 
-  echo "memory:%{F#ff$COL3}$mem_used%{F-} / %{F#ff$COL3}$mem_total%{F-}"
+  #echo "memory:%{F#ff$COL3}$mem_used%{F-} / %{F#ff$COL3}$mem_total%{F-}"
+  echo "memory:%{F#ff$COL3}$mem_used%{F-}"
 }
 
 spoj_widget() {
@@ -93,8 +94,16 @@ spoj_widget() {
   points="${spoj_data[2]}"
 
   #echo "spoj:%{F#ff$COL3}$rank%{F-} / %{F#ff$COL3}${points}%{F-} pts"
-  echo "spoj:%{F#ff$COL3}$rank%{F-}"
-  echo "$(date '+%s') $rank $points" >> /var/log/spojrank.log
+
+  if [[ "$rank" ]]; then
+    echo "$(date '+%s') $rank $points" >> /var/log/spojrank.log
+    echo "spoj:%{F#ff$COL3}$rank%{F-}"
+  else
+    spoj_data=($(tail -n 1 /var/log/spojrank.log))
+    rank="${spoj_data[1]}"
+    echo "spoj:%{F#ff$COL3}$rank%{F-}"
+  fi
+
 }
 
 desktops_widget() {
@@ -138,7 +147,7 @@ widgets_format() {
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} [ spoj $spoj ] [ mem $memory ] [ wifi $wifi ] [ bat $battery ] $date, $time "
+    fmt+="%{r} spoj $spoj / mem $memory / wifi $wifi / bat $battery / $date / $time "
 
     echo "$fmt"
   done

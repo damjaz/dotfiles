@@ -19,10 +19,11 @@ Bundle 'gmarik/vundle'
 Bundle 'ervandew/supertab'
 
 " snipmate & deps
+Bundle 'sirver/ultisnips'
 "Bundle 'MarcWeber/vim-addon-mw-utils'
 "Bundle 'tomtom/tlib_vim'
 "Bundle 'garbas/vim-snipmate'
-"Bundle 'honza/vim-snippets'
+Bundle 'honza/vim-snippets'
 
 
 "
@@ -212,3 +213,6 @@ let g:ctrlp_cmd = 'CtrlP'
 
 let g:SuperTabDefaultCompletionType = "context"
 "let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+"
+"
+let g:UltiSnipsExpandTrigger="<tab>"

@@ -30,5 +30,8 @@ case "$1" in
   "C-y")
     echo -n "$2" | xsel -b -i
     ;;
+  "C-d")
+    rm $2
+    ;;
 esac
 
