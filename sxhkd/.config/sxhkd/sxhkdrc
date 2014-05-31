@@ -66,6 +66,9 @@ super + space
 ctrl + super + space
   dmenu_calc
 
+shift + super + space
+  dmenu_translate
+
 super + Return
   st
 

@@ -20,6 +20,7 @@ open_with vim
 open_with 
 sudo 
 sudo paste
-delete
 mkdir docs
 mkdir git-tests
+delete
+rename todo.txt

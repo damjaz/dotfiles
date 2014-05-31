@@ -103,7 +103,6 @@ spoj_widget() {
     rank="${spoj_data[1]}"
     echo "spoj:%{F#ff$COL3}$rank%{F-}"
   fi
-
 }
 
 desktops_widget() {
@@ -147,7 +146,7 @@ widgets_format() {
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} spoj $spoj / mem $memory / wifi $wifi / bat $battery / $date / $time "
+    fmt+="%{r} spoj $spoj - mem $memory - wifi $wifi - bat $battery - $date - $time "
 
     echo "$fmt"
   done

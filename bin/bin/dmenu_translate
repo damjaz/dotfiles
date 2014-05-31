@@ -1,0 +1,113 @@
+#!/bin/bash
+
+##########################
+# LIST OF LANGUAGES      #
+##########################
+# af    (Afrikaans)      #
+# sq    (Albanian)       #
+# ar    (Arabic)         #
+# hy    (Armenian)       #
+# az    (Azerbaijani)    #
+# eu    (Basque)         #
+# be    (Belarusian)     #
+# bn    (Bengali)        #
+# bg    (Bulgarian)      #
+# ca    (Catalan)        #
+# zh-CN (Chinese)        #
+# hr    (Croatian)       #
+# cs    (Czech)          #
+# da    (Danish)         #
+# nl    (Dutch)          #
+# en    (English)        #
+# eo    (Esperanto)      #
+# et    (Estonian)       #
+# tl    (Filipino)       #
+# fi    (Finnish)        #
+# fr    (French)         #
+# gl    (Galician)       #
+# ka    (Georgian)       #
+# de    (German)         #
+# el    (Greek)          #
+# gu    (Gujarati)       #
+# ht    (Haitian-Creole) #
+# iw    (Hebrew)         #
+# hi    (Hindi)          #
+# hu    (Hungarian)      #
+# is    (Icelandic)      #
+# id    (Indonesian)     #
+# ga    (Irish)          #
+# it    (Italian)        #
+# ja    (Japanese)       #
+# kn    (Kannada)        #
+# ko    (Korean)         #
+# la    (Latin)          #
+# lv    (Latvian)        #
+# lt    (Lithuanian)     #
+# mk    (Macedonian)     #
+# ms    (Malay)          #
+# mt    (Maltese)        #
+# no    (Norwegian)      #
+# fa    (Persian)        #
+# pl    (Polish)         #
+# pt    (Portuguese)     #
+# ro    (Romanian)       #
+# ru    (Russian)        #
+# sr    (Serbian)        #
+# sk    (Slovak)         #
+# sl    (Slovenian)      #
+# es    (Spanish)        #
+# sw    (Swahili)        #
+# sv    (Swedish)        #
+# ta    (Tamil)          #
+# te    (Telugu)         #
+# th    (Thai)           #
+# tr    (Turkish)        #
+# uk    (Ukrainian)      #
+# ur    (Urdu)           #
+# vi    (Vietnamese)     #
+# cy    (Welsh)          #
+# yi    (Yiddish)        #
+##########################
+
+while true; do
+  from_to=($(echo -e "en pl\npl en" | dmenu -p 'translate from to:'))
+
+  if [[ ${#from_to[@]} -eq 2 || ${#from_to[@]} -eq 0 ]]; then
+    break
+  fi
+done
+
+while true; do
+  text="$(echo "" | dmenu -p 'translate text:')"
+
+  if [[ "$text" ]]; then
+    break
+  fi
+done
+
+trans="$(wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1" "http://translate.google.com/translate_a/t?client=x&text=$text&hl=${from_to[0]}&sl=${from_to[0]}&tl=${from_to[1]}" -qO-)"
+trans=($(echo "$trans" | tr -d '{}[]"' | tr ':,' ' '))
+output=""
+
+for (( i = 0; i < ${#trans[@]};  )); do
+  if [[ "${trans[$i]}" = "trans" ]]; then
+    (( i++ ))
+
+    while [[ "${trans[$i]}" != "orig" ]]; do
+      output="$output ${trans[$i]}"
+      (( i++ ))
+    done
+  elif [[ "${trans[$i]}" = "terms" ]]; then
+    (( i++ ))
+    output="$output\n"
+
+    while [[ "${trans[$i]}" != "entry" ]]; do
+      output="$output ${trans[$i]}"
+      (( i++ ))
+    done
+  else
+    (( i++ ))
+  fi
+done
+
+echo -en "$output" | dmenu -l 2 -p 'translated:'
