@@ -72,7 +72,11 @@
 while true; do
   from_to=($(echo -e "en pl\npl en" | dmenu -p 'translate from to:'))
 
-  if [[ ${#from_to[@]} -eq 2 || ${#from_to[@]} -eq 0 ]]; then
+  if [[ $? -ne 0 ]]; then
+    exit
+  fi
+
+  if [[ ${#from_to[@]} -eq 2 ]]; then
     break
   fi
 done
@@ -80,13 +84,43 @@ done
 while true; do
   text="$(echo "" | dmenu -p 'translate text:')"
 
+  if [[ $? -ne 0 ]]; then
+    exit
+  fi
+
   if [[ "$text" ]]; then
     break
   fi
 done
 
-trans="$(wget --user-agent="Mozilla/5.0 (X11; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1" "http://translate.google.com/translate_a/t?client=x&text=$text&hl=${from_to[0]}&sl=${from_to[0]}&tl=${from_to[1]}" -qO-)"
-trans=($(echo "$trans" | tr -d '{}[]"' | tr ':,' ' '))
+format_trans() {
+  local i=0 tmp=""
+  local state=0 
+  local array=()
+
+  while (( i < ${#trans} )); do
+    if (( state )); then # inside "
+      if [[ "${trans:$i:1}" = '"' ]]; then
+        state=0
+        array[${#array[@]}]="$tmp"
+        tmp=""
+      else
+        tmp="${tmp}${trans:$i:1}"
+      fi
+    else # outside "
+      if [[ "${trans:$i:1}" = '"' ]]; then
+        state=1
+      fi
+    fi
+
+    (( i++ ))
+  done
+  trans=("${array[@]}")
+}
+
+trans="$(wget --user-agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36" "http://translate.google.com/translate_a/t?client=x&text=$text&hl=${from_to[0]}&sl=${from_to[0]}&tl=${from_to[1]}" -qO-)"
+trans="$(echo "$trans" | tr -d '{}[]' | tr ':,' ' ')"
+format_trans
 output=""
 
 for (( i = 0; i < ${#trans[@]};  )); do
@@ -97,12 +131,13 @@ for (( i = 0; i < ${#trans[@]};  )); do
       output="$output ${trans[$i]}"
       (( i++ ))
     done
+    output="[ translation ]\n${output#?}"
   elif [[ "${trans[$i]}" = "terms" ]]; then
+    output="$output\n[ ${trans[$(( i - 1 ))]} ]"
     (( i++ ))
-    output="$output\n"
 
     while [[ "${trans[$i]}" != "entry" ]]; do
-      output="$output ${trans[$i]}"
+      output="$output\n${trans[$i]}"
       (( i++ ))
     done
   else
@@ -110,4 +145,13 @@ for (( i = 0; i < ${#trans[@]};  )); do
   fi
 done
 
-echo -en "$output" | dmenu -l 2 -p 'translated:'
+if [[ "$output" ]]; then
+  lines=$(echo -e "$output" | wc -l)
+  output=$(echo -en "$output" | dmenu -l $lines)
+
+  if [[ $? -eq 0 ]]; then
+    echo -n "$output" | xsel -b -i
+  fi
+fi
+
+
