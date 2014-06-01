@@ -24,7 +24,7 @@ xset b off &
 xinput set-prop 11 267 2 &
 xinput set-prop 11 269 1 &
 
-# color temperature
+# nightvision
 redshift -l 50.1:18.5 -t 6500:3300 &
 
 # start panel

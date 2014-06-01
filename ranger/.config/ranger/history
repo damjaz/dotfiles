@@ -22,5 +22,5 @@ sudo
 sudo paste
 mkdir docs
 mkdir git-tests
-delete
 rename todo.txt
+delete
