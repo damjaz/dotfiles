@@ -1,8 +1,0 @@
-#!/bin/bash
-
-case $1 in
-  3) imlibsetroot -s w /home/damian/images/ellenpage/b.jpg ;;
-  *) imlibsetroot -s h /home/damian/images/unreal-girls/wallpaper-2952429.jpg ;;
-esac 
-
-bspc desktop -f ^$1
