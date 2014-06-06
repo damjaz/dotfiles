@@ -1,2 +1,28 @@
-#!/bin/sh
-dmenu_path | dmenu -p 'launch' "$@" | ${SHELL:-"/bin/bash"} &
+#!/bin/bash
+
+dmenu_path() {
+  cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
+
+  if [ -d "$cachedir" ]; then
+    cache=$cachedir/dmenu_run
+  else
+    cache=$HOME/.dmenu_cache # if no xdg dir, fall back to dotfile in ~
+  fi
+
+  IFS=:
+  if stest -dqr -n "$cache" $PATH; then
+    stest -flx $PATH | sort -u | tee "$cache"
+  else
+    cat "$cache"
+  fi
+}
+
+cmd="$(dmenu_path | dmenu -p 'launch')"
+lastchar="${cmd:$(( ${#cmd} - 1 )):1}"
+
+if [[ "$lastchar" = "!" ]]; then
+  cmd="${cmd%?}"
+  st -e "$cmd" &
+else
+  echo "$cmd" | ${SHELL:-"/bin/bash"} &
+fi

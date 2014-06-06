@@ -138,13 +138,13 @@ get_input_text() {
 
 str2array() {
   str_array=()
-  # ugly workaround but much faster
+  # ugly and not fully valid workaround but much faster 
   local str="$(echo -e "$1" | tr -d '{}[],\r' | tr '":\n' ',, ' | tr -s ',')"
   IFS=',' read -a str_array <<< "$str"
 }
 
 while :; do
-  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'Choose mode')
+  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'Dictionary')
 
   if [[ $? -ne 0 ]]; then
     exit
