@@ -110,8 +110,8 @@ urban_dictionary() {
   get_input_text
   response="$(wget --user-agent="$user_agent" "http://api.urbandictionary.com/v0/define?term=$input_text" -qO-)"
   str2array "$response"
-  outside=""
-  
+  output=""
+
   for (( i = 0; i < ${#str_array[@]}; i++ )); do
     if [[ "${str_array[$i]}" = "definition" ]]; then
       (( i++ ))
@@ -119,7 +119,7 @@ urban_dictionary() {
       output="$output\n${str_array[$i]}"
     fi
   done
-  echo "${output#??}"
+  output="${output#??}"
 }
 
 get_input_text() {
@@ -137,35 +137,10 @@ get_input_text() {
 }
 
 str2array() {
-  local i=0 tmp="" state=0
-  str="$(echo "$1" | tr -d '{}[]:,')"
   str_array=()
-
-  while (( i < ${#str} )); do
-    if (( state )); then # inside quotation mark
-      if [[ "${str:$i:1}" = '\' ]]; then
-        (( i++ ))
-
-        if [[ "${str:$i:1}" = '"' ]]; then
-          tmp="$tmp\""
-        elif [[ "${str:$i:1}" = 'n' ]]; then
-          tmp="$tmp "
-        fi
-      elif [[ "${str:$i:1}" = '"' ]]; then
-        state=0
-        str_array[${#str_array[@]}]="$tmp"
-        tmp=""
-      else
-        tmp="${tmp}${str:$i:1}"
-      fi
-    else # outside 
-      if [[ "${str:$i:1}" = '"' ]]; then
-        state=1
-      fi
-    fi
-
-    (( i++ ))
-  done
+  # ugly workaround but much faster
+  local str="$(echo -e "$1" | tr -d '{}[],\r' | tr '":\n' ',, ' | tr -s ',')"
+  IFS=',' read -a str_array <<< "$str"
 }
 
 while :; do
