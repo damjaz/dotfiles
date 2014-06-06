@@ -1,5 +1,9 @@
 #!/bin/bash
 
+user_agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36"
+input_text=""
+output=""
+
 ##########################
 # LIST OF LANGUAGES      #
 ##########################
@@ -69,89 +73,134 @@
 # yi    (Yiddish)        #
 ##########################
 
-while true; do
-  from_to=($(echo -e "en pl\npl en" | dmenu -p 'translate from to:'))
+google_translate() {
+  local response
 
-  if [[ $? -ne 0 ]]; then
-    exit
-  fi
+  get_input_text
+  response="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
+  str2array "$response"
+  output=""
 
-  if [[ ${#from_to[@]} -eq 2 ]]; then
-    break
-  fi
-done
+  for (( i = 0; i < ${#str_array[@]};  )); do
+    if [[ "${str_array[$i]}" = "trans" ]]; then
+      (( i++ ))
 
-while true; do
-  text="$(echo "" | dmenu -p 'translate text:')"
+      while [[ "${str_array[$i]}" != "orig" ]]; do
+        output="$output ${str_array[$i]}"
+        (( i++ ))
+      done
+      output="[ translation ]\n${output#?}"
+    elif [[ "${str_array[$i]}" = "terms" ]]; then
+      output="$output\n[ ${str_array[$(( i - 1 ))]} ]"
+      (( i++ ))
 
-  if [[ $? -ne 0 ]]; then
-    exit
-  fi
+      while [[ "${str_array[$i]}" != "entry" ]]; do
+        output="$output\n${str_array[$i]}"
+        (( i++ ))
+      done
+    else
+      (( i++ ))
+    fi
+  done
+}
 
-  if [[ "$text" ]]; then
-    break
-  fi
-done
+urban_dictionary() {
+  local response 
 
-format_trans() {
-  local i=0 tmp=""
-  local state=0 
-  local array=()
+  get_input_text
+  response="$(wget --user-agent="$user_agent" "http://api.urbandictionary.com/v0/define?term=$input_text" -qO-)"
+  str2array "$response"
+  outside=""
+  
+  for (( i = 0; i < ${#str_array[@]}; i++ )); do
+    if [[ "${str_array[$i]}" = "definition" ]]; then
+      (( i++ ))
 
-  while (( i < ${#trans} )); do
-    if (( state )); then # inside "
-      if [[ "${trans:$i:1}" = '"' ]]; then
+      output="$output\n${str_array[$i]}"
+    fi
+  done
+  echo "${output#??}"
+}
+
+get_input_text() {
+  while :; do
+    input_text="$(dmenu -p 'text:')"
+
+    if [[ $? -ne 0 ]]; then
+      exit
+    fi
+
+    if [[ "$input_text" ]]; then
+      break
+    fi
+  done
+}
+
+str2array() {
+  local i=0 tmp="" state=0
+  str="$(echo "$1" | tr -d '{}[]:,')"
+  str_array=()
+
+  while (( i < ${#str} )); do
+    if (( state )); then # inside quotation mark
+      if [[ "${str:$i:1}" = '\' ]]; then
+        (( i++ ))
+
+        if [[ "${str:$i:1}" = '"' ]]; then
+          tmp="$tmp\""
+        elif [[ "${str:$i:1}" = 'n' ]]; then
+          tmp="$tmp "
+        fi
+      elif [[ "${str:$i:1}" = '"' ]]; then
         state=0
-        array[${#array[@]}]="$tmp"
+        str_array[${#str_array[@]}]="$tmp"
         tmp=""
       else
-        tmp="${tmp}${trans:$i:1}"
+        tmp="${tmp}${str:$i:1}"
       fi
-    else # outside "
-      if [[ "${trans:$i:1}" = '"' ]]; then
+    else # outside 
+      if [[ "${str:$i:1}" = '"' ]]; then
         state=1
       fi
     fi
 
     (( i++ ))
   done
-  trans=("${array[@]}")
 }
 
-trans="$(wget --user-agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36" "http://translate.google.com/translate_a/t?client=x&text=$text&hl=${from_to[0]}&sl=${from_to[0]}&tl=${from_to[1]}" -qO-)"
-trans="$(echo "$trans" | tr -d '{}[]:,')"
-format_trans
-output=""
+while :; do
+  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'Choose mode')
 
-for (( i = 0; i < ${#trans[@]};  )); do
-  if [[ "${trans[$i]}" = "trans" ]]; then
-    (( i++ ))
-
-    while [[ "${trans[$i]}" != "orig" ]]; do
-      output="$output ${trans[$i]}"
-      (( i++ ))
-    done
-    output="[ translation ]\n${output#?}"
-  elif [[ "${trans[$i]}" = "terms" ]]; then
-    output="$output\n[ ${trans[$(( i - 1 ))]} ]"
-    (( i++ ))
-
-    while [[ "${trans[$i]}" != "entry" ]]; do
-      output="$output\n${trans[$i]}"
-      (( i++ ))
-    done
-  else
-    (( i++ ))
+  if [[ $? -ne 0 ]]; then
+    exit
   fi
+
+  case $mode in
+    urban)
+      urban_dictionary
+      break
+      ;;
+    *)
+      mode=($mode)
+
+      if [[ ${#mode[@]} -eq 2 ]]; then
+        src=${mode[0]}
+        dst=${mode[1]}
+        google_translate $src $dst
+        break
+      fi
+      ;;
+  esac
 done
 
 if [[ "$output" ]]; then
-  lines=$(echo -e "$output" | wc -l)
-  output=$(echo -en "$output" | dmenu -l $lines)
+  output=$(echo -en "$output" | dmenu -l 16)
 
   if [[ $? -eq 0 ]]; then
     echo -n "$output" | xsel -b -i
   fi
 fi
+
+
 
 
