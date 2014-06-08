@@ -11,7 +11,7 @@ dmenu_path() {
   fi
 
   if stest -dqr -n "$cache" ${PATH//:/ }; then
-    stest -flx $PATH | sort -u | tee "$cache"
+    stest -flx ${PATH//:/ } | sort -u | tee "$cache"
   else
     cat "$cache"
   fi
@@ -32,7 +32,6 @@ else
 fi
 
 if [[ $? -ne 0 ]]; then
-  echo "command $cmd failed"
   exit
 fi
 

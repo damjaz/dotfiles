@@ -24,10 +24,11 @@ mkdir git-tests
 rename todo.txt
 search
 search con
-open_with 
 open_with chromium
-delete
-search 
 search bin
-search bi
 search dmenu_
+open_with 
+search 
+search bi
+delete
+mkdir KenneyBigPack
