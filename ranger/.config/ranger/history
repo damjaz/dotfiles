@@ -22,10 +22,12 @@ sudo paste
 mkdir docs
 mkdir git-tests
 rename todo.txt
-search bin
 search
-search 
 search con
 open_with 
 open_with chromium
 delete
+search 
+search bin
+search bi
+search dmenu_

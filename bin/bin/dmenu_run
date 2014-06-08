@@ -1,28 +1,44 @@
 #!/bin/bash
 
-dmenu_path() {
-  cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
+cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
+histfile="$cachedir/dmenu_hist"
 
-  if [ -d "$cachedir" ]; then
-    cache=$cachedir/dmenu_run
+dmenu_path() {
+  if [[ -d "$cachedir" ]]; then
+    cache="$cachedir/dmenu_run"
   else
-    cache=$HOME/.dmenu_cache # if no xdg dir, fall back to dotfile in ~
+    cache="$HOME/.dmenu_cache" # if no xdg dir, fall back to dotfile in ~
   fi
 
-  IFS=:
-  if stest -dqr -n "$cache" $PATH; then
+  if stest -dqr -n "$cache" ${PATH//:/ }; then
     stest -flx $PATH | sort -u | tee "$cache"
   else
     cat "$cache"
   fi
 }
 
-cmd="$(dmenu_path | dmenu -p 'launch')"
+hist=""
+if [[ -e "$histfile" ]]; then
+  hist="$(< "$histfile")"
+fi
+
+cmd="$( { echo -e "$hist" & dmenu_path; } | dmenu -p 'launch')"
 lastchar="${cmd:$(( ${#cmd} - 1 )):1}"
 
 if [[ "$lastchar" = "!" ]]; then
-  cmd="${cmd%?}"
-  st -e "$cmd" &
+  st -e "${cmd%?}" 
 else
-  echo "$cmd" | ${SHELL:-"/bin/bash"} &
+  echo "$cmd" | ${SHELL:-"/bin/bash"}
 fi
+
+if [[ $? -ne 0 ]]; then
+  echo "command $cmd failed"
+  exit
+fi
+
+if [ "$hist" ]; then
+  hist="$hist\n"
+fi
+
+hist="$hist$cmd"
+echo -en "$hist" | sort -u > "$histfile"
