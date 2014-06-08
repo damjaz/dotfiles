@@ -1,43 +1,56 @@
 #!/bin/bash
 
-cachedir=${XDG_CACHE_HOME:-"$HOME/.cache"}
-histfile="$cachedir/dmenu_hist"
+runfile="$HOME/.cache/dmenu_run"
+cmd_names=()
+cmd_launch_no=()
+n=0
 
-dmenu_path() {
-  if [[ -d "$cachedir" ]]; then
-    cache="$cachedir/dmenu_run"
-  else
-    cache="$HOME/.dmenu_cache" # if no xdg dir, fall back to dotfile in ~
-  fi
-
-  if stest -dqr -n "$cache" ${PATH//:/ }; then
-    stest -flx ${PATH//:/ } | sort -u | tee "$cache"
-  else
-    cat "$cache"
-  fi
-}
-
-hist=""
-if [[ -e "$histfile" ]]; then
-  hist="$(< "$histfile")"
+if [[ -e "$runfile" ]]; then
+  while read -r line; do
+    cmd_names[$n]="${line%:*}"
+    cmd_launch_no[$n]="${line##*:}"
+    (( n++ ))
+  done < "$runfile" 
 fi
 
-cmd="$( { echo -e "$hist" & dmenu_path; } | dmenu -p 'launch')"
-lastchar="${cmd:$(( ${#cmd} - 1 )):1}"
-
-if [[ "$lastchar" = "!" ]]; then
-  st -e "${cmd%?}" 
-else
-  echo "$cmd" | ${SHELL:-"/bin/bash"}
-fi
+# alternative to stest : compgen -c 
+runcmd="$({
+  for cmd in "${cmd_names[@]}"; do
+    echo "$cmd"
+  done &
+  stest -flx ${PATH//:/ } &
+} | dmenu -p 'Launch')"
 
 if [[ $? -ne 0 ]]; then
   exit
 fi
 
-if [ "$hist" ]; then
-  hist="$hist\n"
+i=0
+cmd_in=0
+for cmd in "${cmd_names[@]}"; do
+  if [[ "$cmd" = "$runcmd" ]]; then
+    (( cmd_launch_no[i]++ ))
+    cmd_in=1
+    break
+  fi
+  (( i++ ))
+done
+
+if [[ $cmd_in -eq 0 ]]; then
+  cmd_names[$n]="$runcmd"
+  cmd_launch_no[$n]="1"
 fi
 
-hist="$hist$cmd"
-echo -en "$hist" | sort -u > "$histfile"
+i=0
+for cmd in "${cmd_names[@]}"; do
+  echo "$cmd:${cmd_launch_no[$i]}"
+  (( i++ ))
+done | sort -r -n -k2 -t ':' > "$runfile"
+
+if [[ "${runcmd:$(( ${#runcmd} - 1 )):1}" = '!' ]]; then
+  st -e ${runcmd%?} &
+  #st -e '/bin/bash' '-c' "${runcmd%?}" &
+else
+  $runcmd &
+fi
+
