@@ -5,8 +5,10 @@ wallpapers[0]="-s h /home/damian/images/ellenpage/b.jpg"
 wallpapers[1]="-s h -p c /home/damian/images/ellenpage/kitty-pryde-x-men-days-of-future-past-1920x1080.jpg"
 wallpapers[2]="-s h -p c /home/damian/images/ellenpage/shadowcat-x-men-days-of-future-past-1920x1080.jpg"
 wallpapers[3]="-s h -p c /home/damian/images/unreal_girls/wallpaper-2431894.jpg"
+wallpapers[4]="-s h /home/damian/images/wallpapers/wallpaper-2225236.jpg"
+wallpapers[5]="-s h /home/damian/images/wallpapers/wallpaper-2508462.jpg"
 
-priorities=(0 0 3 1)
+priorities=(0 0 0 0 5 3)
 
 for (( i = 0; i < ${#priorities[@]}; i++ )); do
   for (( j = 0; j < priorities[i]; j++)); do

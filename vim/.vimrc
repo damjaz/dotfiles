@@ -14,7 +14,7 @@ Bundle 'gmarik/vundle'
 "Bundle 'tpope/vim-fugitive'
 "Bundle 'airblade/vim-gitgutter'
 "Bundle 'tpope/vim-surround'
-"Bundle 'majutsushi/tagbar'
+Bundle 'majutsushi/tagbar'
 "Bundle 'kien/ctrlp.vim'
 Bundle 'ervandew/supertab'
 
@@ -45,6 +45,8 @@ set shortmess=atI " no intro
 set history=1000
 set undolevels=1000
 set clipboard+=unnamed " TODO: ?share clipboard?
+" Since I use linux, I want this
+let g:clipbrdDefaultReg = '+' " TODO: test
 " no swap/backup files
 set nobackup
 set noswapfile
@@ -77,6 +79,8 @@ set softtabstop=2 " virtual tabs
 au WinLeave * set nocursorline
 au WinEnter * set cursorline
 
+let loaded_matchparen = 1
+set viminfo^=% " Remember info about open buffers on close
 set t_Co=256
 set listchars=tab:\ \ ,trail:.
 set laststatus=2 " always show status line
@@ -87,12 +91,12 @@ set title
 set ruler " row and col number in status line
 set showcmd
 set showmode
-"set showmatch "TODO: dafuq?
 set cursorline
 set nowrap " dont wrap lines
 set colorcolumn=81
 set noerrorbells
 set novisualbell
+set lazyredraw
 " horizontal and vertical context
 set scrolloff=10
 set sidescroll=10
@@ -106,12 +110,16 @@ set smartcase " ignore case when search pattern is all lowercase
 set wildmenu
 set wildmode=list:longest,full
 set wildchar=<TAB>
+set wildignore=*.o,*~,*.pyc,.git
 
 set foldmethod=marker
 set foldnestmax=3
 set foldcolumn=1
 set nofoldenable " dont fold by default
-
+"When completing by tag, show the whole tag, not just the function name
+set showfulltag "TODO: test it.
+" get rid of the silly characters in separators
+set fillchars = ""
 
 "
 " Key mapping
@@ -119,6 +127,7 @@ set nofoldenable " dont fold by default
 
 
 let mapleader=","
+let g:mapleader=","
 " dont throw reverse character search cmd
 noremap \ ,
 set pastetoggle=<F4>
@@ -129,6 +138,33 @@ nnoremap ; :
 nmap <silent> <leader>/ :nohlsearch<CR>
 " remove trailing whitespaces
 map <silent> <F3> :%s/\s\+$//e<CR>
+
+" Pressing ,ss will toggle and untoggle spell checking
+map <leader>ss :setlocal spell!<CR>
+
+" easy resizing
+map <silent> <leader>< :vertical resize -5<CR>
+map <silent> <leader>> :vertical resize +5<CR>
+
+" Treat long lines as break lines (useful when moving around in them)
+map j gj
+map k gk
+
+" The following beast is something i didn't write... it will return the 
+" syntax highlighting group that the current "thing" under the cursor
+" belongs to -- very useful for figuring out what to change as far as 
+" syntax highlighting goes.
+nmap <silent> ,qq :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<' . synIDattr(synID(line("."),col("."),0),"name") . "> lo<" . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+
+" Make the current file executable
+nmap <silent> <leader>x :w<cr>:!chmod 755 %<cr>:e<cr>
+
+" next/prev buffer
+map <C-p> :bp <CR>
+map <C-n> :bn <CR>
+
+" Use :w!! to save with sudo if you're editing a readonly file
+cmap w!! w !sudo tee % >/dev/null
 
 
 "
@@ -147,6 +183,18 @@ else
   colorscheme supergirl " TODO: change it
 endif
 
+"
+" Helper functions
+"
+
+
+" Delete trailing white space
+function! DeleteTrailingWS()
+  normal mz
+  %s/\s\+$//ge
+  normal `z
+endfunction
+
 " Strip the newline from the end of a string
 function! Chomp(str)
   return substitute(a:str, '\n$', '', '')
@@ -162,7 +210,6 @@ function! DmenuOpen(cmd)
 endfunction
 
 map <silent> <c-f> :call DmenuOpen("e")<cr>
-
 
 "
 " Netrw
@@ -192,27 +239,35 @@ map <silent> <F2> :call ToggleVExplorer()<CR>
 
 let g:netrw_winsize=20 " 20% of current window
 let g:netrw_banner=0 " disable top panel
-"let g:netrw_browse_split = 4
+let g:netrw_browse_split = 4
 let g:netrw_altv=1
 let g:netrw_liststyle=3
 let g:netrw_mousemaps=0
-
-"
-" CtrlP
-"
-
-
-let g:ctrlp_map = '<c-p>'
-let g:ctrlp_cmd = 'CtrlP'
 
 
 "
 " Supertab
 "
 
-
 let g:SuperTabDefaultCompletionType = "context"
 "let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+
+
 "
+" UltiSnips
 "
+
 let g:UltiSnipsExpandTrigger="<tab>"
+
+
+"
+" Tagbar
+"
+"
+nmap <silent> <F8> :TagbarToggle<CR>
+
+let g:tagbar_sort = 0
+let g:tagbar_autofocus = 1
+"let g:tagbar_compact = 1
+
+set tags=./tags;/ "TODO: configure tags

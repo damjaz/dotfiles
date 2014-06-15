@@ -19,7 +19,7 @@ runcmd="$({
     echo "$cmd"
   done &
   stest -flx ${PATH//:/ } &
-} | dmenu -p 'Launch')"
+} | sort -u | dmenu -p 'launch')"
 
 if [[ $? -ne 0 ]]; then
   exit

@@ -30,5 +30,6 @@ search dmenu_
 open_with 
 search 
 search bi
-delete
 mkdir KenneyBigPack
+rename dga1.jpg
+delete

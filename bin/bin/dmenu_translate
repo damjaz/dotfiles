@@ -144,7 +144,7 @@ str2array() {
 }
 
 while :; do
-  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'Dictionary')
+  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'dictionary')
 
   if [[ $? -ne 0 ]]; then
     exit

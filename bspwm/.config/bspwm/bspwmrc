@@ -2,7 +2,7 @@
 
 . colors-def
 
-bspc monitor -d term web code misc
+bspc monitor -d 0x10 0x20 0x40 0xFF
 
 bspc config border_width 1
 bspc config window_gap 4
@@ -12,7 +12,7 @@ bspc config gapless_monocle true
 bspc config top_padding 20
 
 # application rules
-bspc rule -a Chromium desktop=web
+bspc rule -a Chromium desktop=^2
 
 bspc config focused_border_color "#$COL9"
 bspc config normal_border_color "#$COL0"
