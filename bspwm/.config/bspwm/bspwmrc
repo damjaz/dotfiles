@@ -2,7 +2,7 @@
 
 . colors-def
 
-bspc monitor -d 0x10 0x20 0x40 0xFF
+bspc monitor -d 001 010 011 100
 
 bspc config border_width 1
 bspc config window_gap 4

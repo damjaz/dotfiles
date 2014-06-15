@@ -160,8 +160,8 @@ nmap <silent> ,qq :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . 
 nmap <silent> <leader>x :w<cr>:!chmod 755 %<cr>:e<cr>
 
 " next/prev buffer
-map <C-p> :bp <CR>
-map <C-n> :bn <CR>
+map <silent> <C-p> :bp <CR>
+map <silent> <C-n> :bn <CR>
 
 " Use :w!! to save with sudo if you're editing a readonly file
 cmap w!! w !sudo tee % >/dev/null
@@ -258,7 +258,8 @@ let g:SuperTabDefaultCompletionType = "context"
 "
 
 let g:UltiSnipsExpandTrigger="<tab>"
-
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 "
 " Tagbar

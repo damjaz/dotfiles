@@ -1,0 +1,22 @@
+#!/bin/bash
+
+desktops="$(bspc control --get-status)"
+desktops="${desktops#*:}"
+desktops="${desktops%:*}"
+desktops=(${desktops//:/ })
+dmenu_in=""
+
+for (( i = 0; i < ${#desktops[@]}; i++ )); do
+  desktops[$i]="${desktops[$i]#?}"
+  dmenu_in="$dmenu_in ${desktops[$i]}"
+done
+
+desktops="$(echo "${dmenu_in#?}" | dmenu -p 'desktops (space separated)')"
+
+if [[ $? -ne 0 ]]; then
+  exit
+fi
+
+if [[ "$desktops" ]]; then
+  bspc monitor -d $desktops &
+fi

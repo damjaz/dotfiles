@@ -27,9 +27,10 @@ search con
 open_with chromium
 search bin
 search dmenu_
-open_with 
 search 
 search bi
 mkdir KenneyBigPack
 rename dga1.jpg
+search spoj
+open_with 
 delete

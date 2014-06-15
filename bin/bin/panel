@@ -105,6 +105,12 @@ spoj_widget() {
   fi
 }
 
+mount_widget() {
+  local mounted=$(ls -1 -d /mnt/*/ /media/*/ 2>/dev/null | wc -l)
+
+  echo "mount:%{F#ff$COL3}$mounted%{F-}"
+}
+
 desktops_widget() {
   local line bspwm_status desktops field
 
@@ -131,7 +137,7 @@ desktops_widget() {
 }
 
 widgets_format() {
-  local date time battery title wifi desktops fmt line memory spoj
+  local date time battery title wifi desktops fmt line memory spoj mount
 
   while read -r line; do
     case $line in
@@ -143,10 +149,11 @@ widgets_format() {
       desktops*)  desktops="${line#*:}" ;;
       memory*)    memory="${line#*:}" ;;
       spoj*)      spoj="${line#*:}" ;;
+      mount*)     mount="${line#*:}" ;;
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} [ spoj $spoj, mem $memory, wifi $wifi, bat $battery ] $date, $time "
+    fmt+="%{r} [ spoj $spoj, mnt $mount, mem $memory, wifi $wifi, bat $battery ] $date, $time "
 
     echo "$fmt"
   done
@@ -163,6 +170,7 @@ widgets_format() {
     battery_widget
     date_widget
     time_widget
+    mount_widget
     sleep 1
   done &
 

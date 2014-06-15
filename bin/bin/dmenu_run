@@ -48,6 +48,7 @@ for cmd in "${cmd_names[@]}"; do
 done | sort -r -n -k2 -t ':' > "$runfile"
 
 if [[ "${runcmd:$(( ${#runcmd} - 1 )):1}" = '!' ]]; then
+  runcmd="${runcmd/\~/$HOME}"
   st -e ${runcmd%?} &
   #st -e '/bin/bash' '-c' "${runcmd%?}" &
 else
