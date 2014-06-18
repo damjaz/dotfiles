@@ -7,9 +7,11 @@ expr_hist="scale=4"
 last_ans_len=0
 
 while expr=$(echo -e -n "$ans_hist" | dmenu -l 10 -p 'calculate'); do
-  if [[ "$expr" = "copy" ]]; then
+  if [[ "$expr" = "!copy" ]]; then
     echo -n "$ans" | xsel -b -i
     continue
+  elif [[ "$expr" = "!paste" ]]; then
+    expr="$(xsel -b -o)"
   fi
 
   ans=$(echo -e "$expr_hist\n$expr" | bc -l 2>&1)

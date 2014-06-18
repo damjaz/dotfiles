@@ -32,5 +32,7 @@ search bi
 mkdir KenneyBigPack
 rename dga1.jpg
 search spoj
-open_with 
 delete
+search slim
+search kern
+open_with 

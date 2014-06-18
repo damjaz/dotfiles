@@ -143,8 +143,8 @@ map <silent> <F3> :%s/\s\+$//e<CR>
 map <leader>ss :setlocal spell!<CR>
 
 " easy resizing
-map <silent> <leader>< :vertical resize -5<CR>
-map <silent> <leader>> :vertical resize +5<CR>
+map <silent> <leader>< :vertical resize -10<CR>
+map <silent> <leader>> :vertical resize +10<CR>
 
 " Treat long lines as break lines (useful when moving around in them)
 map j gj

@@ -130,6 +130,10 @@ get_input_text() {
       exit
     fi
 
+    if [[ "$input_text" = "!paste" ]]; then
+      input_text="$(xsel -b -o)"
+    fi
+
     if [[ "$input_text" ]]; then
       break
     fi
