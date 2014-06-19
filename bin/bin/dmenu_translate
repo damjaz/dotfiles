@@ -3,6 +3,8 @@
 user_agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36"
 input_text=""
 output=""
+mode=()
+cache_file="$HOME/.cache/dmenu_translate"
 
 ##########################
 # LIST OF LANGUAGES      #
@@ -123,8 +125,17 @@ urban_dictionary() {
 }
 
 get_input_text() {
+  local cached=""
+  cache_file="${cache_file}_${mode[0]}"
+
+  if [[ -e "$cache_file" ]]; then
+    cached="$(tail -n 100 "$cache_file")"
+  else
+    touch "$cache_file"
+  fi
+
   while :; do
-    input_text="$(dmenu -p 'text:')"
+    input_text="$(echo -en "$cached" | dmenu -p 'text:')"
 
     if [[ $? -ne 0 ]]; then
       exit
@@ -135,6 +146,7 @@ get_input_text() {
     fi
 
     if [[ "$input_text" ]]; then
+      echo "$input_text" >> "$cache_file"
       break
     fi
   done
@@ -148,20 +160,18 @@ str2array() {
 }
 
 while :; do
-  mode=$(echo -e "en pl\npl en\nurban" | dmenu -p 'dictionary')
+  mode=($(echo -e "en pl\npl en\nurban" | dmenu -p 'dictionary'))
 
   if [[ $? -ne 0 ]]; then
     exit
   fi
 
-  case $mode in
+  case ${mode[0]} in
     urban)
       urban_dictionary
       break
       ;;
     *)
-      mode=($mode)
-
       if [[ ${#mode[@]} -eq 2 ]]; then
         src=${mode[0]}
         dst=${mode[1]}
