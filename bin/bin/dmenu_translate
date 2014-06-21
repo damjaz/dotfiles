@@ -76,52 +76,16 @@ cache_file="$HOME/.cache/dmenu_translate"
 ##########################
 
 google_translate() {
-  local response
-
   get_input_text
-  response="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
-  str2array "$response"
-  output=""
-
-  for (( i = 0; i < ${#str_array[@]};  )); do
-    if [[ "${str_array[$i]}" = "trans" ]]; then
-      (( i++ ))
-
-      while [[ "${str_array[$i]}" != "orig" ]]; do
-        output="$output ${str_array[$i]}"
-        (( i++ ))
-      done
-      output="[ translation ]\n${output#?}"
-    elif [[ "${str_array[$i]}" = "terms" ]]; then
-      output="$output\n[ ${str_array[$(( i - 1 ))]} ]"
-      (( i++ ))
-
-      while [[ "${str_array[$i]}" != "entry" ]]; do
-        output="$output\n${str_array[$i]}"
-        (( i++ ))
-      done
-    else
-      (( i++ ))
-    fi
-  done
+  output="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
+  # tricky line
+  output="$(echo -en "$output" | jq -r '"[ translation ]", .sentences[].trans, (.dict[] | select(has("pos")) | "[ \(.pos) ]", .terms[])')"
 }
 
 urban_dictionary() {
-  local response 
-
   get_input_text
-  response="$(wget --user-agent="$user_agent" "http://api.urbandictionary.com/v0/define?term=$input_text" -qO-)"
-  str2array "$response"
-  output=""
-
-  for (( i = 0; i < ${#str_array[@]}; i++ )); do
-    if [[ "${str_array[$i]}" = "definition" ]]; then
-      (( i++ ))
-
-      output="$output\n${str_array[$i]}"
-    fi
-  done
-  output="${output#??}"
+  output="$(wget --user-agent="$user_agent" "http://api.urbandictionary.com/v0/define?term=$input_text" -qO-)"
+  output="$(echo -en "$output"| tr -d '\r' | jq -r '.list[].definition')"
 }
 
 get_input_text() {
@@ -129,7 +93,7 @@ get_input_text() {
   cache_file="${cache_file}_${mode[0]}"
 
   if [[ -e "$cache_file" ]]; then
-    cached="$(tail -n 100 "$cache_file")"
+    cached="$(tail -n 100 "$cache_file" | sort -u)"
   else
     touch "$cache_file"
   fi
@@ -150,13 +114,6 @@ get_input_text() {
       break
     fi
   done
-}
-
-str2array() {
-  str_array=()
-  # ugly and not fully valid workaround but much faster 
-  local str="$(echo -e "$1" | tr -d '{}[],\r' | tr '":\n' ',, ' | tr -s ',')"
-  IFS=',' read -a str_array <<< "$str"
 }
 
 while :; do
@@ -188,6 +145,8 @@ if [[ "$output" ]]; then
   if [[ $? -eq 0 ]]; then
     echo -n "$output" | xsel -b -i
   fi
+else
+  echo -en "error: empty output!" | dmenu
 fi
 
 
