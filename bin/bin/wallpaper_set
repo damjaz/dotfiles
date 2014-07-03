@@ -1,22 +1,21 @@
 #!/bin/bash
 
+wd="$HOME/images/wallpapers"
 wallpapers=()
-wallpapers[0]="-s h /home/damian/images/ellenpage/b.jpg"
-wallpapers[1]="-s h -p c /home/damian/images/ellenpage/kitty-pryde-x-men-days-of-future-past-1920x1080.jpg"
-wallpapers[2]="-s h -p c /home/damian/images/ellenpage/shadowcat-x-men-days-of-future-past-1920x1080.jpg"
-wallpapers[3]="-s h -p c /home/damian/images/unreal_girls/wallpaper-2431894.jpg"
-wallpapers[4]="-s h /home/damian/images/wallpapers/wallpaper-2225236.jpg"
-wallpapers[5]="-s h /home/damian/images/wallpapers/wallpaper-2508462.jpg"
 
-priorities=(0 0 0 0 5 3)
+wallpapers[0]="-s h $wd/10.jpg"
+wallpapers[1]="-s h $wd/13.jpg"
+wallpapers[2]="-s h $wd/14.jpg"
+wallpapers[3]="-s h -p c $wd/15.jpg"
+wallpapers[4]="-s h $wd/16.jpg"
+wallpapers[5]="-s h $wd/4.jpg"
+wallpapers[6]="-s h $wd/8.jpg"
+wallpapers[7]="-s h $wd/3.jpg"
+wallpapers[8]="-s h -p c $wd/9.jpg"
+wallpapers[9]="-s h $wd/12.jpg"
+wallpapers[10]="-s w -p c $wd/17.jpg"
 
-for (( i = 0; i < ${#priorities[@]}; i++ )); do
-  for (( j = 0; j < priorities[i]; j++)); do
-    wallpapers[${#wallpapers[@]}]="${wallpapers[i]}"
-  done
-done
-
-while true; do
+while :; do
   imlibsetroot ${wallpapers[$(( $RANDOM % ${#wallpapers[@]} ))]}
   sleep 5m
 done

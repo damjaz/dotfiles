@@ -1,5 +1,14 @@
 #!/bin/bash
 
+deps=(wget jq dmenu xsel)
+
+for dep in ${deps[@]}; do
+  if ! hash $dep > /dev/null 2>&1; then
+    echo "Dependency: $dep not found."
+    exit
+  fi
+done
+
 user_agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36"
 input_text=""
 output=""
@@ -93,7 +102,7 @@ get_input_text() {
   cache_file="${cache_file}_${mode[0]}"
 
   if [[ -e "$cache_file" ]]; then
-    cached="$(tail -n 100 "$cache_file" | sort -u)"
+    cached="$(tail -n 100 "$cache_file")"
   else
     touch "$cache_file"
   fi
