@@ -1,49 +1,121 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+#!/bin/bash
 
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
-      *) return;;
+      *) return ;;
 esac
 
-# don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
 
-# append to the history file, don't overwrite it
-shopt -s histappend
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=100000000
-HISTFILESIZE=100000
 
-# check the window size after each command and, if necessary,
+# Cause the status of terminated background jobs to be reported immediately, 
+# rather than before printing the next primary prompt.
+set -o notify
+# Prevent output redirection using ‘>’, ‘>&’, and ‘<>’ from overwriting existing files. 
+set -o noclobber
+# An interactive shell will not exit upon reading EOF.
+set -o ignoreeof
+# Disable '!' style history substitution.
+set +o histexpand
+
+
+
+
+# An argument to the cd builtin command that is not a directory is assumed 
+# to be the name of a variable whose value is the directory to change to.
+shopt -s cdable_vars
+# Minor errors in the spelling of a directory component in a cd command will be corrected.
+shopt -s cdspell
+# Bash checks that a command found in the hash table exists before trying to 
+# execute it. If a hashed command no longer exists, a normal path search is performed.
+shopt -s checkhash
+# Check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
+# append to the history file, don't overwrite it
+shopt -s histappend histreedit histverify
+# Bash attempts to save all lines of a multiple-line command in the same 
+# history entry. This allows easy re-editing of multi-line commands.
+shopt -s cmdhist
+# Extended pattern matching features.
+shopt -s extglob
+# Bash will not attempt to search the PATH for possible completions when 
+# completion is attempted on an empty line.
+shopt -s no_empty_cmd_completion
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
 
+
+
+# Don't put duplicate lines or lines starting with space in the history.
+HISTCONTROL=ignoreboth
+# Time stamps are written to the history file so they may be pre‐served across shell sessions.
+HISTTIMEFORMAT='[%d-%m-%y %H:%M:%S] '
+# The number of commands to remember in the command history.
+HISTSIZE=100000
+# The maximum number of lines contained in the history file.
+HISTFILESIZE=100000
+# Minimalist prompt
 PS1='[\w] '
+
+
+
+
+# set PATH so it includes some bin dirs if they doesn't exist in PATH yet
+newpathdirs=("/sbin" "/usr/sbin" "$HOME/bin")
+
+pathdirs=(${PATH//:/ })
+for newpathdir in "${newpathdirs[@]}"; do
+  newpathdirexist=0
+  for pathdir in "${pathdirs[@]}"; do
+    if [[ "$newpathdir" = "$pathdir" ]]; then
+      newpathdirexist=1
+      break
+    fi
+  done
+  if [[ $newpathdirexist -eq 0 ]]; then
+    if [[ -d "$newpathdir" ]]; then
+      PATH="$newpathdir:$PATH"
+      #echo "adding $newpathdir to PATH"
+    fi
+  fi
+done
+
+
+
 export EDITOR='vim'
 export VISUAL='vim'
+export PAGER='less'
+export BROWSER='chromium'
+export PATH
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+
+
 
 alias ls='ls --color=auto'
 alias ll='ls -l'
 alias la='ls -A'
 alias lla='ls -lA'
+
 alias ..='cd ..'
-alias mkdir='mkdir -p'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+alias mkdir='mkdir -p -v'
+alias rm='rm -i'
+alias mv='mv -i'
+alias cp='cp -i'
+
 alias j='jump'
 alias m='mark'
+
+alias debug="set -o nounset; set -o xtrace"
+alias path='echo -e ${PATH//:/\\n}'
+
+
+
+
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -56,20 +128,24 @@ if ! shopt -oq posix; then
   fi
 fi
 
+
+
+
+
 # navigation system
 export MARKPATH=$HOME/.marks
 
-function jump { 
+jump() { 
     cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
 }
-function mark { 
+mark() { 
     mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
 }
-function unmark { 
+unmark() { 
     rm -i "$MARKPATH/$1"
 }
-function marks {
-    ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 's/ -/\t-/g' && echo
+marks() {
+    ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 'e/ -/\t-/g' && echo
 }
 
 _completemarks() {

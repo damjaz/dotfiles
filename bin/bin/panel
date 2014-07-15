@@ -85,26 +85,6 @@ mem_widget() {
   echo "memory:%{F#ff$COL3}$mem_used%{F-}"
 }
 
-spoj_widget() {
-  local spoj_data rank points
-
-  spoj_data=($(curl -s http://www.spoj.com/users/damianjazwic/ | head -n 167 |\
-               tail -n 2 | tr -d -c '[:digit:].\n>' | tr '>' ' '))
-  rank="${spoj_data[1]}"
-  points="${spoj_data[2]}"
-
-  #echo "spoj:%{F#ff$COL3}$rank%{F-} / %{F#ff$COL3}${points}%{F-} pts"
-
-  if [[ "$rank" ]]; then
-    echo "$(date '+%s') $rank $points" >> /var/log/spojrank.log
-    echo "spoj:%{F#ff$COL3}$rank%{F-}"
-  else
-    spoj_data=($(tail -n 1 /var/log/spojrank.log))
-    rank="${spoj_data[1]}"
-    echo "spoj:%{F#ff$COL3}$rank%{F-}"
-  fi
-}
-
 mount_widget() {
   local mounted=$(ls -1 -d /mnt/*/ /media/*/ 2>/dev/null | wc -l)
 
@@ -137,7 +117,7 @@ desktops_widget() {
 }
 
 widgets_format() {
-  local date time battery title wifi desktops fmt line memory spoj mount
+  local date time battery title wifi desktops fmt line memory mount
 
   while read -r line; do
     case $line in
@@ -148,12 +128,11 @@ widgets_format() {
       wifi*)      wifi="${line#*:}" ;;
       desktops*)  desktops="${line#*:}" ;;
       memory*)    memory="${line#*:}" ;;
-      spoj*)      spoj="${line#*:}" ;;
       mount*)     mount="${line#*:}" ;;
     esac
   
     fmt="%{l}$desktops [ $title ]"
-    fmt+="%{r} [ spoj $spoj, mnt $mount, mem $memory, wifi $wifi, bat $battery ] $date, $time "
+    fmt+="%{r} [ mnt $mount, mem $memory, wifi $wifi, bat $battery ] $date, $time "
 
     echo "$fmt"
   done
@@ -172,11 +151,6 @@ widgets_format() {
     time_widget
     mount_widget
     sleep 1
-  done &
-
-  while true; do
-    spoj_widget
-    sleep 1h
   done &
 } | widgets_format | $panel_cmd &
 
