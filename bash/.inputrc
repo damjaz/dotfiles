@@ -19,3 +19,6 @@ set show-all-if-unmodified on
 
 # With this enabled, underscores and hyphens are treated equally when completing
 set completion-map-case on
+
+# Alt-m
+"\em": "$(mg   )\C-b\C-b\C-b"

@@ -6,7 +6,7 @@
 # kills children jobs on exit, not sure if it's valid
 trap 'kill 0' HUP INT TERM EXIT
 
-panel_cmd="bar -g x20 -B#$COL0 -F#$COL15 -f terminus-12"
+panel_cmd="bar -g x16 -B#$COL0 -F#$COL15 -f terminus-12"
 
 date_widget() {
   local date="$(date '+%a %-d %B')"

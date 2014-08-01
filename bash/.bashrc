@@ -63,7 +63,6 @@ PS1='[\w] '
 
 # set PATH so it includes some bin dirs if they doesn't exist in PATH yet
 newpathdirs=("/sbin" "/usr/sbin" "$HOME/bin")
-
 pathdirs=(${PATH//:/ })
 for newpathdir in "${newpathdirs[@]}"; do
   newpathdirexist=0
@@ -83,6 +82,7 @@ done
 
 
 
+
 export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
@@ -93,25 +93,23 @@ export PATH
 
 
 
-alias ls='ls --color=auto'
+alias ls='ls -hX --color=auto --group-directories-first'
+alias lt='ls -t'
 alias ll='ls -l'
 alias la='ls -A'
-alias lla='ls -lA'
+alias lla='ll -A'
+alias lls='lla -S'
 
 alias ..='cd ..'
-alias ...='cd ../..'
-alias ....='cd ../../..'
 
 alias mkdir='mkdir -p -v'
 alias rm='rm -i'
 alias mv='mv -i'
 alias cp='cp -i'
 
-alias j='jump'
-alias m='mark'
-
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
+alias todo='vim ~/documents/todo'
 
 
 
@@ -133,26 +131,45 @@ fi
 
 
 # navigation system
-export MARKPATH=$HOME/.marks
+#export MARKPATH="$HOME/.marks"
+#
+#jump() { 
+#    #pushd "$MARKPATH/$1" >&/dev/null || echo "No such mark: $1"
+#    cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
+#}
+#
+#mark() { 
+#    mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
+#}
+#
+#unmark() { 
+#    rm -i "$MARKPATH/$1"
+#}
+#
+#marks() {
+#  for mark in $MARKPATH/*; do
+#    local basename="${mark##*/}"
+#    local linkdst="$(readlink -f $mark)"
+#    linkdst="${linkdst/$HOME/~}"
+#    echo "$basename $linkdst"
+#  done | column -t
+#}
+#
+#_completemarks() {
+#  local curw=${COMP_WORDS[COMP_CWORD]}
+#  local wordlist=$(find $MARKPATH -type l -printf "%f\n")
+#  COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
+#  return 0
+#}
+#
+#alias j='jump'
+#alias m='mark'
+#
+#complete -F _completemarks jump j mark m
 
-jump() { 
-    cd -P "$MARKPATH/$1" 2>/dev/null || echo "No such mark: $1"
-}
-mark() { 
-    mkdir -p "$MARKPATH"; ln -s "$(pwd)" "$MARKPATH/$1"
-}
-unmark() { 
-    rm -i "$MARKPATH/$1"
-}
-marks() {
-    ls -l "$MARKPATH" | sed 's/  / /g' | cut -d' ' -f9- | sed 'e/ -/\t-/g' && echo
-}
 
-_completemarks() {
-  local curw=${COMP_WORDS[COMP_CWORD]}
-  local wordlist=$(find $MARKPATH -type l -printf "%f\n")
-  COMPREPLY=($(compgen -W '${wordlist[@]}' -- "$curw"))
-  return 0
-}
 
-complete -F _completemarks jump unmark
+# Reminders
+echo
+remind ~/documents/reminders/main.rem
+echo

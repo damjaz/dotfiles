@@ -1,5 +1,6 @@
 #!/bin/bash
 
+SHELL="${SHELL:-/bin/bash}"
 runfile="$HOME/.cache/dmenu_run"
 cmd_names=()
 cmd_launch_no=()
@@ -19,7 +20,7 @@ runcmd="$({
     echo "$cmd"
   done &
   stest -flx ${PATH//:/ } &
-} | sort -u | dmenu -p 'launch')"
+} | dmenu -p 'launch')"
 
 if [[ $? -ne 0 ]]; then
   exit
@@ -52,6 +53,7 @@ if [[ "${runcmd:$(( ${#runcmd} - 1 )):1}" = '!' ]]; then
   st -e ${runcmd%?} &
   #st -e '/bin/bash' '-c' "${runcmd%?}" &
 else
-  $runcmd &
+  exec $SHELL -c "$runcmd"
+  # echo -e "$runcmd" | /bin/bash &
 fi
 

@@ -1,21 +1,22 @@
 #!/bin/bash
 
 wd="$HOME/images/wallpapers"
-wallpapers=()
-
-wallpapers[0]="-s h $wd/10.jpg"
-wallpapers[1]="-s h $wd/13.jpg"
-wallpapers[2]="-s h $wd/14.jpg"
-wallpapers[3]="-s h -p c $wd/15.jpg"
-wallpapers[4]="-s h $wd/16.jpg"
-wallpapers[5]="-s h $wd/4.jpg"
-wallpapers[6]="-s h $wd/8.jpg"
-wallpapers[7]="-s h $wd/3.jpg"
-wallpapers[8]="-s h -p c $wd/9.jpg"
-wallpapers[9]="-s h $wd/12.jpg"
-wallpapers[10]="-s w -p c $wd/17.jpg"
 
 while :; do
-  imlibsetroot ${wallpapers[$(( $RANDOM % ${#wallpapers[@]} ))]}
+  # exclude filenames starting with '!'
+  wallpapers=($wd/[^!]*)
+  # get random filename
+  wallpaper="${wallpapers[ RANDOM % ${#wallpapers[@]} ]}"
+  # basename
+  wallpaper="${wallpaper##*/}"
+  # parse arguments
+  # filename should be named arguments__name.ext
+  # s_w-p_c__sth.jpg is executed as imlibsetroot -s w -p c s_w-p_c__sth.jpg
+  args="${wallpaper%%__*}"
+  args="-${args//-/ -}"
+  args="${args//_/ }"
+
+  imlibsetroot $args "$wd/$wallpaper"
+  # change wallpaper every 5 minutes
   sleep 5m
 done

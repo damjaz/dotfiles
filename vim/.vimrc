@@ -39,7 +39,7 @@ language en_US.utf8
 set encoding=utf-8
 set fileencoding=utf-8
 
-set mouse=a " enable mouse in all modes
+" set mouse=a " enable mouse in all modes
 set hidden " hides buffers instead of closing them
 set shortmess=atI " no intro
 set history=1000
@@ -120,6 +120,9 @@ set nofoldenable " dont fold by default
 set showfulltag "TODO: test it.
 " get rid of the silly characters in separators
 set fillchars = ""
+colorscheme supergirl " TODO: change it
+
+
 
 "
 " Key mapping
@@ -167,25 +170,11 @@ map <silent> <C-n> :bn <CR>
 cmap w!! w !sudo tee % >/dev/null
 
 
-"
-" GUI config (gvim)
-"
-
-
-if has("gui_running")
-  set guioptions=c " fock toolbars and other shit
-  set guifont=GohuFont\ 12,Terminus\ 12
-  set guicursor=a:blinkon0
-  set noantialias
-  colorscheme clouds-midnight
-  set lines=35 columns=100
-else
-  colorscheme supergirl " TODO: change it
-endif
 
 "
 " Helper functions
 "
+
 
 
 " Delete trailing white space
@@ -237,7 +226,7 @@ function! ToggleVExplorer()
 endfunction
 map <silent> <F2> :call ToggleVExplorer()<CR>
 
-let g:netrw_winsize=20 " 20% of current window
+let g:netrw_winsize=30 " 20% of current window
 let g:netrw_banner=0 " disable top panel
 let g:netrw_browse_split = 4
 let g:netrw_altv=1

@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # bspwm-session
 #
@@ -37,7 +37,7 @@ export BSPWM_SOCKET=${state_path}/bspwm-socket
 
 # Trap: make sure everything started in ~/.config/bspwm/autostart is
 # signalled when this script exits or dies. Also clean up $state_path.
-function on_exit {
+on_exit() {
 	for child in $(jobs -p); do
 		jobs -p | grep -q $child && kill $child
 	done

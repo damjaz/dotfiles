@@ -3,7 +3,7 @@
 #
 
 super + alt + Escape
-  bspc quit
+  bspwm-quit
 
 super + w
   bspc window -c
@@ -20,8 +20,8 @@ super + s ; {1-9, 0}
 super + s ; {Left, Right, Up, Down}
   bspc window focused -s {left, right, up, down}
 
-super + {Left, Right, Up, Down, Tab, grave}
-  bspc window focused -f {left, right, up, down, next, prev}
+super + {Left, Right, Up, Down, Tab}
+  bspc window focused -f {left, right, up, down, next}
 
 super + ctrl + {Left, Right, Up, Down} ; super + ctrl + {Up, Down}
   bspc window focused -e {left, right, up, down} {+50, -50}
@@ -70,6 +70,10 @@ shift + super + space
   dmenu_translate
 
 super + Return
+  st
+
+# for single hand job ;)
+super + grave
   st
 
 super + d
