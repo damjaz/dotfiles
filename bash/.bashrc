@@ -17,14 +17,14 @@ set -o noclobber
 # An interactive shell will not exit upon reading EOF.
 set -o ignoreeof
 # Disable '!' style history substitution.
-set +o histexpand
+#set +o histexpand
 
 
 
 
 # An argument to the cd builtin command that is not a directory is assumed 
 # to be the name of a variable whose value is the directory to change to.
-shopt -s cdable_vars
+#shopt -s cdable_vars
 # Minor errors in the spelling of a directory component in a cd command will be corrected.
 shopt -s cdspell
 # Bash checks that a command found in the hash table exists before trying to 
@@ -101,15 +101,17 @@ alias lla='ll -A'
 alias lls='lla -S'
 
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+cdd() {
+  builtin cd "$@" && ls;
+}
 
 alias mkdir='mkdir -p -v'
-alias rm='rm -i'
-alias mv='mv -i'
-alias cp='cp -i'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
-alias todo='vim ~/documents/todo'
 
 
 

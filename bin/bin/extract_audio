@@ -1,7 +1,0 @@
-#!/bin/bash
-
-if [[ "$1" ]]; then
-  avconv -i "$1" -map 0:1 -c:a copy "${1%.*}.mp3"
-else
-  echo 'No input file.'
-fi

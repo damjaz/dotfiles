@@ -1,3 +1,5 @@
+#!/bin/bash
+
 COL0='191919'
 COL1='C6301B'
 COL2='366F1A'

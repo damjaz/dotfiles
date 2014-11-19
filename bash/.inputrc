@@ -20,5 +20,11 @@ set show-all-if-unmodified on
 # With this enabled, underscores and hyphens are treated equally when completing
 set completion-map-case on
 
+#  the word to be completed is replaced "inline" with a single match from
+#  the list of possible completions, and if I press the Tab key again, 
+#  the word gets replaced with the next match.
+#  Tab = "\C-i"
+#Tab: menu-complete
+
 # Alt-m
 "\em": "$(mg   )\C-b\C-b\C-b"

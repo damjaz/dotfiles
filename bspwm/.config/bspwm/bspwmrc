@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. colors-def
+. color-scheme
 
 bspc monitor -d 001 010 011 100
 

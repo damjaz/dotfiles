@@ -12,28 +12,28 @@
 # keysym as listed in /usr/include/X11/keysymdef.h without the "XK_" prefix.
 
 case "$1" in
-  "w")
+  "1")
     imlibsetroot -s w "$2"
     ;;
-  "h")
+  "2")
     imlibsetroot -s h "$2"
     ;;
-  "c")
-    imlibsetroot -s -p c "$2"
+  "3")
+    imlibsetroot -s h -p c "$2"
    ;;
-  "x")
+  "4")
     imlibsetroot -s -p cx "$2"
     ;;
-  "y")
+  "5")
     imlibsetroot -s -p cy "$2"
     ;;
-  "C-y")
+  "y")
     echo -n "$2" | xsel -b -i
     ;;
-  "C-d")
+  "d")
     rm "$2"
     ;;
-  "C-r")
-    mv "$2" $(echo "$2" | dmenu)
+  "r")
+    mv "$2" "${2%/*}/$(echo "${2##*/}" | dmenu)"
 esac
 

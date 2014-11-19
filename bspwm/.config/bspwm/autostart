@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# restore wallpaper
-wallpaper_set &
+# set random wallpaper
+wallpaper-randomize &
 
 # set cursor to arrow
 xsetroot -cursor_name left_ptr &

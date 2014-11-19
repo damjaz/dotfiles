@@ -1,0 +1,13 @@
+#!/bin/bash
+
+while :; do
+  # exclude hidden files
+  files=($HOME/images/wallpapers/[^.]*)
+
+  if [[ ${#files[@]} -ne 0 ]]; then
+    # set random wallpaper
+    setroot -z "${files[ RANDOM % ${#files[@]} ]}"
+  fi
+
+  sleep 5m
+done
