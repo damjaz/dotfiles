@@ -1,0 +1,171 @@
+#!/bin/bash
+
+
+# 
+# Basic config
+#
+
+player='mplayer'
+quality='high,best,medium,low,mobile'
+limit='25'
+dmenu='dmenu -i -l 20 -p twitch.tv'
+
+#
+# Chat config
+#
+
+openchat='yes'
+username='boltiedies'
+oauth='oauth:slb3l71hbrpk28lp7pu3ae7sb3ei1vj'
+terminal='st'
+
+#
+# End of config
+#
+
+twitch_request() {
+  local api_ver='Accept: application/vnd.twitchtv.v2+json'
+  local api_url='https://api.twitch.tv/kraken'
+  local reply=''
+
+  reply="$(curl -sLGH "$api_ver" "$api_url$1")"
+  reply="$(jq -r "$2" <<< "$reply")"
+  column -s $'\t' -t <<< "$reply"
+}
+
+menu_games() {
+  local game=''
+  local filter=$'.top[] | "\(.game.name)\t\(.viewers)"'
+  local games="$(twitch_request "/games/top?limit=$limit" "$filter")"
+
+  while :; do
+    game="$($dmenu <<< "$games")"
+    (( $? )) && break
+
+    game="${game% *}"
+    game="${game%"${game##*[![:space:]]}"}"
+
+    menu_channels "&game=${game// /%20}"
+  done
+}
+
+menu_channels() {
+  local channel=''
+  local filter=$'.streams[] | "\(.channel.display_name)\t\(.viewers)\t\(.game)\t\(.channel.status)"'
+  local channels="$(twitch_request "/streams?limit=$limit$1" "$filter")"
+
+  while :; do
+    channel="$($dmenu <<< "$channels")"
+    (( $? )) && break
+
+    channel_open "$channel"
+  done
+}
+
+channel_open() {
+  local channel_name="${1%% *}"
+
+  [[ "$openchat" == 'yes' ]] && $terminal -e "$0" 'chat' "$channel_name" &
+  exec livestreamer -p "$player" "http://www.twitch.tv/${channel_name,,}" "$quality" >/dev/null
+}
+
+menu_main() {
+  local choice=''
+
+  while :; do
+    choice="$($dmenu <<< $'Games\nChannels')"
+    (( $? )) && break
+
+    case "$choice" in
+      'Games') menu_games ;;
+      'Channels') menu_channels ;;
+      *) channel_open "$choice" ;;
+    esac
+  done
+}
+
+con_output() {
+  local color='' warray=''
+  local src="${1,,}" dst="${1,,}" msg="${3,,}" fmt='%20.20s | %s'
+
+  #msg="${msg//[^a-z0-9 \.\/\:\;-_=+]}"
+
+  # color highlighting, priority from lower to higher
+  [[ "$src" == 'jtv' ]]          && color=32
+  [[ "$src" == 'moonbot' ]]      && color=32
+  [[ "$src" == 'nightbot' ]]     && color=32
+  [[ "$src" == 'xanbot' ]]       && color=32
+  [[ "$src" == "$channel" ]]     && color=35 # msg from channel owner
+  [[ "$msg" == *"$username"* ]]  && color=31 # msg containing my username
+  [[ "$dst" == "$username" ]]    && color=31 # msg TO me from user/channel
+  [[ "$src" == "$username" ]]    && color=34 # msg FROM me to user/channel
+
+  # ignore one word comments that arent special ^
+  # no more VACs LOLs raffle!s
+  #read -r -a warray <<< "$msg"
+  #[[ ! $color ]] && (( ${#warray[@]} < 2 )) && return
+
+  [[ $color ]] && fmt="\e[${color}m$fmt\e[0m"
+  printf "$fmt\n" "$src" "$msg"
+}
+
+con_input() {
+  local input=''
+
+  while read -r input; do
+    if (( ${#input} > 0 )); then
+      irc_send "PRIVMSG #$channel :$input"
+      con_output "$username" "#$channel" "$input"
+    fi
+  done
+}
+
+irc_send() {
+  printf '%s\r\n' "$*" >&3
+}
+
+irc_recv() {
+  local line src cmd dst msg;
+
+  while read -r line; do
+    case $line in
+      :*)
+        read -r src cmd dst msg <<< "${line:1}"
+
+        case $cmd in
+          PRIVMSG)
+            con_output "${src%%!*}" "$dst" "${msg:1}"
+            ;;
+        esac
+        ;;
+
+      PING*) 
+        irc_send "${line/PING/PONG}" 
+        ;;
+    esac
+  done <&3
+}
+
+
+irc_main() {
+  exec 3<>/dev/tcp/irc.twitch.tv/6667
+
+  irc_send "USER $username 0 * :$username"
+  irc_send "PASS $oauth"
+  irc_send "NICK $username"
+  irc_send "JOIN #${channel,,}"
+
+  irc_recv &
+  con_input
+}
+
+case "$1" in
+  'chat') 
+    channel="$2"
+    irc_main 
+    ;;
+  *) 
+    menu_main 
+    ;;
+esac
+  

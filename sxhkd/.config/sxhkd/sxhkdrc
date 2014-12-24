@@ -14,7 +14,7 @@ super + q
   bspc window -c
 
 # lock a window from closing
-super + shift + q
+super + shift + z
   bspc window focused -t locked
 
 # toggle visibility of all windows in all desktops
@@ -23,7 +23,7 @@ super + v
 
 # toggle floating / fullscreen
 super + {_, shift} + f
-  bspc window focused -t {floating, fullscreen}
+  bspc window focused -t {fullscreen, floating}
 
 # move window to desktop
 super + x ; {1-9, 0}
