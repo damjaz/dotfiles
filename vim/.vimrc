@@ -7,8 +7,8 @@ set nocompatible
 
 
 filetype off  " vundle requires this to be off initially
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim/
+call vundle#begin()
 
 Bundle 'gmarik/vundle'
 "Bundle 'tpope/vim-fugitive'
@@ -25,6 +25,7 @@ Bundle 'sirver/ultisnips'
 "Bundle 'garbas/vim-snipmate'
 Bundle 'honza/vim-snippets'
 
+call vundle#end()
 
 "
 " General

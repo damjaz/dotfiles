@@ -57,9 +57,7 @@ HISTSIZE=100000
 HISTFILESIZE=100000
 # Minimalist prompt
 PS1='[\w] '
-
-
-
+(( ! $EUID )) && PS1='#[\w] '
 
 # set PATH so it includes some bin dirs if they doesn't exist in PATH yet
 newpathdirs=("/sbin" "/usr/sbin" "$HOME/bin")
@@ -75,23 +73,15 @@ for newpathdir in "${newpathdirs[@]}"; do
   if [[ $newpathdirexist -eq 0 ]]; then
     if [[ -d "$newpathdir" ]]; then
       PATH="$newpathdir:$PATH"
-      #echo "adding $newpathdir to PATH"
     fi
   fi
 done
-
-
-
 
 export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
 export BROWSER='chromium'
 export PATH
-
-
-
-
 
 alias ls='ls -hX --color=auto --group-directories-first'
 alias lt='ls -t'
@@ -102,20 +92,11 @@ alias lls='lla -S'
 
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ....='cd ../../..'
-
-cdd() {
-  builtin cd "$@" && ls;
-}
 
 alias mkdir='mkdir -p -v'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
-
-
-
-
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -127,10 +108,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-
-
-
 
 # navigation system
 #export MARKPATH="$HOME/.marks"
@@ -169,9 +146,5 @@ fi
 #
 #complete -F _completemarks jump j mark m
 
-
-
-# Reminders
-echo
-remind ~/documents/reminders/main.rem
-echo
+# start X automatically after login on tty1
+[[ $(tty) = '/dev/tty1' ]] && exec startx

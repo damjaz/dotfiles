@@ -1,0 +1,8 @@
+#!/bin/bash
+
+action="$(dmenu -l 3 <<< $'\nShutdown\nReboot')"
+
+case "$action" in
+  'Shutdown') sudo shutdown -h now ;;
+  'Reboot') sudo shutdown -r now ;;
+esac
