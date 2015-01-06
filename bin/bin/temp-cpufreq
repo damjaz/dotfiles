@@ -1,0 +1,7 @@
+#!/bin/bash
+
+
+sudo cpufreq-set -g userspace
+sudo cpufreq-set -u 800MHz
+sudo cpufreq-set -d 800MHz
+sudo cpufreq-set -f 800MHz

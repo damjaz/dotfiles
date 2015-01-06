@@ -56,8 +56,8 @@ HISTSIZE=100000
 # The maximum number of lines contained in the history file.
 HISTFILESIZE=100000
 # Minimalist prompt
-PS1='[\w] '
-(( ! $EUID )) && PS1='#[\w] '
+PS1='\w \$ '
+#(( ! $EUID )) && PS1='#[\w] '
 
 # set PATH so it includes some bin dirs if they doesn't exist in PATH yet
 newpathdirs=("/sbin" "/usr/sbin" "$HOME/bin")

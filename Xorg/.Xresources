@@ -1,8 +1,8 @@
 ! font settings --------------------------------------------------------------
 
 Xft.autohint: 0
-Xft.antialias: 1
-Xft.hinting: 1
+Xft.antialias: 0
+Xft.hinting: 0
 Xft.hintstyle: hintslight
 Xft.rgba: rgb
 Xft.lcdfilter: lcddefault
