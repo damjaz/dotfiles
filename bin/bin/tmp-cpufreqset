@@ -1,0 +1,8 @@
+#!/bin/bash
+
+sudo cpufreq-set -g ondemand
+sudo cpufreq-set -d 800MHz
+sudo cpufreq-set -u ${1:-800MHz}
+sudo cpufreq-set -f ${1:-800MHz}
+
+cpufreq-info | grep 'current'

@@ -3,7 +3,7 @@
 #set -x
 
 ans_hist=""
-expr_hist="scale=4"
+expr_hist="scale=10"
 last_ans_len=0
 
 while expr=$(echo -e -n "$ans_hist" | dmenu -l 10 -p 'calculate'); do

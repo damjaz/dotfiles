@@ -18,19 +18,28 @@ set show-all-if-ambiguous on
 set show-all-if-unmodified on
 
 # With this enabled, underscores and hyphens are treated equally when completing
-set completion-map-case on
+#set completion-map-case on
 
-#  the word to be completed is replaced "inline" with a single match from
-#  the list of possible completions, and if I press the Tab key again, 
-#  the word gets replaced with the next match.
-#  Tab = "\C-i"
+# the word to be completed is replaced "inline" with a single match from
+# the list of possible completions, and if I press the Tab key again, 
+# the word gets replaced with the next match.
+# Tab = "\C-i"
 #Tab: menu-complete
 
 # Ctrl-Alt-r interactive root shell
 "\e\C-r": "\C-usudo -s\C-m"
 
+"\e\C-i": "apt-get install "
+"\e\C-p": "apt-get purge "
+
 # Alt-s Prefix the line with sudo
 "\es": "\C-asudo \C-e"
 
 # Ctrl-Alt-l Append | less to line and run it
-"\e\C-l":"\C-e | less\C-m"
+"\e\C-l": "\C-e | less\C-m"
+
+# This allows you to search through your history using the up and down arrows
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\e[C": forward-char
+"\e[D": backward-char

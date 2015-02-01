@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for filename in "$@"; do
+  case $(file --mime-type -Lb "$filename") in
+    image*) sxiv "$filename" ;;
+    text*) vim "$filename" ;;
+    inode/directory) cd "$filename";;
+  esac
+done

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LANG='pl_PL.utf8'
+
 user_agent="Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36"
 input_text=""
 output=""
@@ -79,7 +81,7 @@ google_translate() {
   get_input_text
   output="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
   # tricky line
-  output="$(echo -en "$output" | jq -r '"[ translation ]", .sentences[].trans, (.dict[] | select(has("pos")) | "[ \(.pos) ]", .terms[])')"
+  output="$(echo -en "$output" | jq -r '.sentences[].trans, (.dict[] | select(has("pos")) | "[ \(.pos) ]", .terms[])')"
 }
 
 urban_dictionary() {

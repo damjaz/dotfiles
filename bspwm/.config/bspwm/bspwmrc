@@ -2,10 +2,18 @@
 
 . color-scheme
 
-bspc monitor -d 1 2 3 4
-
 bspc config border_width 1
-bspc config window_gap 2
+bspc config window_gap 0
 bspc config split_ratio 0.5
 bspc config borderless_monocle true
 bspc config gapless_monocle true
+
+bspc config focused_border_color "#$COL8"
+bspc config normal_border_color "#$COL0"
+bspc config presel_border_color "#$COL15"
+bspc config focused_locked_border_color "#$COL1"
+
+bspc monitor -d 1 2 3 4 5
+
+bspc rule -a xmessage floating=on center=on
+bspc rule -a Chromium desktop=^2

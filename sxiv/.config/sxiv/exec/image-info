@@ -5,9 +5,9 @@
 # with the name of the image file as its first argument.
 # The output is displayed in sxiv's status bar.
 
-filename=$(basename "$1")
-filesize=$(du -Hh "$1" | cut -f 1)
-geometry=$(identify -format '%wx%h' "$1[0]")
+filename=$(basename -- "$1")
+filesize=$(du -Hh -- "$1" | cut -f 1)
+geometry=$(identify -format '%wx%h' -- "$1[0]")
 
 echo "${filesize} | ${geometry} | ${filename}"
 

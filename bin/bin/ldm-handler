@@ -1,0 +1,4 @@
+#!/bin/bash
+
+printf '[%s] %sED %s in %s\n' "$(date '+%Y-%m-%d %H:%M')" "${LDM_ACTION^^}" "$LDM_NODE" "$LDM_MOUNTPOINT" 
+

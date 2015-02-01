@@ -69,23 +69,17 @@ super + @button{1-3}
 # applications/scripts hotkeys
 #
 
-alt + l
+super + l
   slock
 
-alt + space
+super + space
   dmenu-run
 
-alt + c
-  dmenu-calc
-
-alt + d
-  dmenu-dict
-
-alt + p
-  scrot -q 100 -e 'mv $f ~/images/screenshots/'
+super + p
+  import -window root ~/images/screenshots/$(date '+%Y%m%d-%H%M%S.png')
 
 # spawn terminal
-alt + {Return, grave}
+super + {Return, grave}
   st
 
 # make sxhkd reload its configuration files

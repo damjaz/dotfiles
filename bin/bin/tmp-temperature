@@ -1,0 +1,7 @@
+#!/bin/bash
+
+while :; do 
+  temp=($(acpi -t)); 
+  printf '%.0f\n' ${temp[3]}; 
+  sleep 1
+done

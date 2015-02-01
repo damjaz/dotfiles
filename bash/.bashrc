@@ -8,17 +8,15 @@ esac
 
 
 
-
 # Cause the status of terminated background jobs to be reported immediately, 
 # rather than before printing the next primary prompt.
 set -o notify
 # Prevent output redirection using ‘>’, ‘>&’, and ‘<>’ from overwriting existing files. 
-set -o noclobber
+#set -o noclobber
 # An interactive shell will not exit upon reading EOF.
 set -o ignoreeof
 # Disable '!' style history substitution.
-#set +o histexpand
-
+set +o histexpand
 
 
 
@@ -46,6 +44,10 @@ shopt -s no_empty_cmd_completion
 
 
 
+# Disable XON/XOFF flow conntrol (C-s/C-q)
+stty -ixon
+
+
 
 # Don't put duplicate lines or lines starting with space in the history.
 HISTCONTROL=ignoreboth
@@ -54,34 +56,17 @@ HISTTIMEFORMAT='[%d-%m-%y %H:%M:%S] '
 # The number of commands to remember in the command history.
 HISTSIZE=100000
 # The maximum number of lines contained in the history file.
-HISTFILESIZE=100000
-# Minimalist prompt
-PS1='\w \$ '
-#(( ! $EUID )) && PS1='#[\w] '
+HISTFILESIZE=1000000
+# simple prompt
+PS1='[\w] '
+(( ! $EUID )) && PS1='[\w]# '
 
-# set PATH so it includes some bin dirs if they doesn't exist in PATH yet
-newpathdirs=("/sbin" "/usr/sbin" "$HOME/bin")
-pathdirs=(${PATH//:/ })
-for newpathdir in "${newpathdirs[@]}"; do
-  newpathdirexist=0
-  for pathdir in "${pathdirs[@]}"; do
-    if [[ "$newpathdir" = "$pathdir" ]]; then
-      newpathdirexist=1
-      break
-    fi
-  done
-  if [[ $newpathdirexist -eq 0 ]]; then
-    if [[ -d "$newpathdir" ]]; then
-      PATH="$newpathdir:$PATH"
-    fi
-  fi
-done
 
 export EDITOR='vim'
 export VISUAL='vim'
 export PAGER='less'
 export BROWSER='chromium'
-export PATH
+export PATH="$HOME/bin:$PATH"
 
 alias ls='ls -hX --color=auto --group-directories-first'
 alias lt='ls -t'
@@ -97,17 +82,6 @@ alias mkdir='mkdir -p -v'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
-    . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
-fi
 
 # navigation system
 #export MARKPATH="$HOME/.marks"
@@ -145,6 +119,11 @@ fi
 #alias m='mark'
 #
 #complete -F _completemarks jump j mark m
+
+# enable programmable completion
+if shopt -q progcomp && [[ -r /usr/share/bash-completion/bash_completion ]]; then
+  . /usr/share/bash-completion/bash_completion
+fi
 
 # start X automatically after login on tty1
 [[ $(tty) = '/dev/tty1' ]] && exec startx

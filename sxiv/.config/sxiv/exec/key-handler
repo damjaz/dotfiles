@@ -11,29 +11,14 @@
 # where C/M/S indicate Ctrl/Meta(Alt)/Shift modifier states and KEY is the X
 # keysym as listed in /usr/include/X11/keysymdef.h without the "XK_" prefix.
 
-case "$1" in
-  "1")
-    imlibsetroot -s w "$2"
-    ;;
-  "2")
-    imlibsetroot -s h "$2"
-    ;;
-  "3")
-    imlibsetroot -s h -p c "$2"
-   ;;
-  "4")
-    imlibsetroot -s -p cx "$2"
-    ;;
-  "5")
-    imlibsetroot -s -p cy "$2"
-    ;;
-  "y")
-    echo -n "$2" | xsel -b -i
-    ;;
-  "d")
-    rm "$2"
-    ;;
-  "r")
-    mv "$2" "${2%/*}/$(echo "${2##*/}" | dmenu)"
-esac
+while read -r filename; do
+  case "$1" in
+    'C-x')
+      setroot -z "$filename" ;;
+    'd')
+      rm "$filename" ;;
+    'r')
+      mv "$filename" "$(printf "$filename" | dmenu)" ;;
+  esac
+done
 
