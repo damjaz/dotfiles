@@ -78,10 +78,11 @@ cache_file="$HOME/.cache/dmenu_translate"
 ##########################
 
 google_translate() {
-  get_input_text
-  output="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
+  output="google fucked up"
+  #get_input_text
+  #output="$(wget --user-agent="$user_agent" "http://translate.google.com/translate_a/t?client=x&text=$input_text&hl=$1&sl=$1&tl=$2" -qO-)"
   # tricky line
-  output="$(echo -en "$output" | jq -r '.sentences[].trans, (.dict[] | select(has("pos")) | "[ \(.pos) ]", .terms[])')"
+  #output="$(echo -en "$output" | jq -r '.sentences[].trans, (.dict[] | select(has("pos")) | "[ \(.pos) ]", .terms[])')"
 }
 
 urban_dictionary() {

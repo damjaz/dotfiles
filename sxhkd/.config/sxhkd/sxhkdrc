@@ -66,8 +66,34 @@ super + @button{1-3}
   bspc pointer -u
 
 #
+# Media hotkeys
+#
+
+XF86AudioRaiseVolume
+  amixer sset Master 2+ unmute
+
+XF86AudioLowerVolume
+  amixer sset Master 2- unmute
+
+XF86AudioMute
+  amixer sset Master toggle
+
+# xbacklight is external application
+XF86MonBrightnessUp
+  xbacklight +10
+
+XF86MonBrightnessDown
+  xbacklight -10
+
+#
 # applications/scripts hotkeys
 #
+
+super + o
+  st -e ranger
+
+super + i
+  chromium
 
 super + l
   slock
@@ -78,7 +104,7 @@ super + space
 super + p
   import -window root ~/images/screenshots/$(date '+%Y%m%d-%H%M%S.png')
 
-# spawn terminal
+# terminal
 super + {Return, grave}
   st
 
