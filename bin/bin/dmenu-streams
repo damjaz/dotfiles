@@ -5,8 +5,8 @@
 # Basic config
 #
 
-player='mplayer'
-quality='high,best,medium,low,mobile'
+player='mpv'
+quality='best,high,medium,low,mobile'
 limit='25'
 dmenu='dmenu -i -l 20 -p twitch.tv'
 

@@ -29,7 +29,7 @@ call plug#begin('~/.vim/plugs')
 "Plug 'kurkale6ka/vim-pairs'         " new punctuation text objects
 "Plug 'tommcdo/vim-exchange'         " easy text exchange for vim
 "Plug 'terryma/vim-multiple-cursors' " multiple selection like Sublime
-Plug 'majutsushi/Tagbar'            " view ctags easily
+"Plug 'majutsushi/Tagbar'            " view ctags easily
 Plug 'ajh17/VimCompletesMe'         " tab completion
 "Plug 'ervandew/supertab'
 call plug#end()
@@ -53,6 +53,8 @@ set nobackup
 set noswapfile
 set nowb
 set autoread
+set splitright
+set splitbelow
 
 "
 " Editing
@@ -75,7 +77,8 @@ au WinLeave * set nocursorline
 au WinEnter * set cursorline
 "let loaded_matchparen = 1
 set viminfo^=% " Remember info about open buffers on close
-set listchars=tab:\ \ ,trail:.
+"set listchars=tab:\ \ ,trail:.
+"set listchars=tab:▸\ ,eol:¬
 set laststatus=2 " always show status line
 "set statusline=[\ %F\ %m\ ]\ %{fugitive#statusline()}\ %y%=%l,%c\ %P "TODO: change
 set number " show line numbers

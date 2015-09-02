@@ -48,7 +48,7 @@ battery_widget() {
 title_widget() {
   local line id title
 
-  xprop -spy -root ':$0\n' _NET_ACTIVE_WINDOW | while read -r line; do
+  xprop -root ':$0\n' _NET_ACTIVE_WINDOW | while read -r line; do
     id="${line#*:}"
     title="$(xprop -id $id _NET_WM_NAME 2>/dev/null)"
 

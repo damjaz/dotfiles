@@ -1,9 +1,11 @@
 #
+r
+r
 # bspwm hotkeys
 #
 
-super + alt + Escape
-  bspwm-quit
+ctrl + alt + Escape
+  dmenu-shutdown
 
 # change desktop names
 super + n
@@ -43,7 +45,7 @@ super + shift + {a, d, w, s, q}
 
 # change active desktop
 super + {1-9, 0}
-  bspc desktop -f ^{1-9, 10}
+  bspwm-desktops-ctrl ^{1-9, 10}
 
 # maximize window
 super + z
@@ -70,15 +72,15 @@ super + @button{1-3}
 #
 
 XF86AudioRaiseVolume
-  amixer sset Master 2+ unmute
+  volume-ctrl 3+ unmute
 
 XF86AudioLowerVolume
-  amixer sset Master 2- unmute
+  volume-ctrl 3- unmute
 
 XF86AudioMute
-  amixer sset Master toggle
+  volume-ctrl toggle
 
-# xbacklight is external application
+# screen brightness
 XF86MonBrightnessUp
   xbacklight +10
 
@@ -89,13 +91,20 @@ XF86MonBrightnessDown
 # applications/scripts hotkeys
 #
 
+super + Escape
+  notify-info
+
 super + o
-  st -e ranger
+  LANG=en_US.utf8 st -e ncmpcpp
+
+super + m
+  LANG=en_US.utf8 st -e mc -S gotar / ~
 
 super + i
   chromium
 
 super + l
+  bspc control --toggle-visibility; \
   slock
 
 super + space
@@ -109,6 +118,9 @@ super + {Return, grave}
   st
 
 # make sxhkd reload its configuration files
-super + Escape
+ctrl + Escape
   pkill -USR1 -x sxhkd; \
-  dmenu -p 'sxhkd config reloaded'
+  notify-send 'sxhkd config reloaded'
+
+#F5
+#  ;

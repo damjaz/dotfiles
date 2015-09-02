@@ -1,0 +1,8 @@
+#!/bin/bash
+
+exec 6<>/dev/tcp/localhost/6600
+
+[[ $? -eq 0 ]] || exit
+
+printf '%s\nclose\n' "$*" >&6
+cat <&6

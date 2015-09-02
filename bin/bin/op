@@ -1,9 +1,23 @@
 #!/bin/bash
 
+itwaslink=0
+
 for filename in "$@"; do
-  case $(file --mime-type -Lb "$filename") in
+  case "$filename" in
+    magnet:*) rtorrent "$filename"; itwaslink=1;;
+  esac
+
+  if (( itwaslink )); then
+    itwaslink=0
+    continue
+  fi
+
+  filetype="$(file --mime-type -Lb "$filename")"
+  case $filetype in
     image*) sxiv "$filename" ;;
     text*) vim "$filename" ;;
-    inode/directory) cd "$filename";;
+    #inode/directory) ls -la "$filename";;
+    application/pdf) mupdf "$filename";;
+    *) printf "No rule for mimetype '$filetype' ($filename)\n"
   esac
 done

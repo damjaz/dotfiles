@@ -1,0 +1,17 @@
+#!/bin/bash
+
+. color-scheme
+
+#LOCKFILE='/tmp/volctl.lock'
+voldata=($(amixer sset Master "$@" | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]%'))
+
+#[[ -f "$LOCKFILE" ]] &&  exit 1;
+#touch "$LOCKFILE"
+#sleep 1
+#rm "$LOCKFILE"
+
+if [[ ${voldata[1]} = 'off' ]]; then
+  notify-send -u normal "<span color=\"#$COL1\">audio muted</span>"
+else
+  notify-send -u low "volume ${voldata[0]}%"
+fi

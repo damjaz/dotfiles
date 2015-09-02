@@ -48,16 +48,12 @@ for cmd in "${cmd_names[@]}"; do
   (( i++ ))
 done | sort -r -n -k2 -t ':' > "$runfile"
 
-if [[ "$runcmd" == *! ]]; then
+if [[ "${runcmd:$(( ${#runcmd} - 1 )):1}" = '!' ]]; then
   runcmd="${runcmd/\~/$HOME}"
   exec st -e  ${runcmd%?}
-elif [[ "$runcmd" == *= ]]; then
-  exec dmenu-calc "${runcmd%?}"
+  #st -e '/bin/bash' '-c' "${runcmd%?}" &
 else
-  if ! hash "${runcmd%% *}"; then
-    exec dmenu-calc "$runcmd"
-  else
-    exec $SHELL -c "$runcmd"
-  fi
+  exec $SHELL -c "$runcmd"
+  # echo -e "$runcmd" | /bin/bash &
 fi
 

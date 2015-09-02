@@ -1,14 +1,17 @@
-http://feeds.gawker.com/lifehacker/full
+#http://feeds.gawker.com/lifehacker/full # spam
 
 # general programming and software development
 http://www.joelonsoftware.com/rss.xml
 http://feeds.feedburner.com/codinghorror
-
+http://blog.cleancoder.com/atom.xml
+http://ruslanspivak.com/feeds/all.atom.xml
+http://www.codeproject.com/WebServices/ArticleRSS.aspx
 
 # general linux
 http://lwn.net/headlines/newrss
-http://lxer.com/module/newswire/headlines.rss
-http://www.phoronix.com/rss.php
+#http://lxer.com/module/newswire/headlines.rss # spam
+#http://www.phoronix.com/rss.php # spam
+http://feeds.feedburner.com/GustavoDuarte?format=xml
 
 
 # console 
@@ -22,3 +25,8 @@ http://blog.z3bra.org/rss/feed.xml
 
 # web development
 http://feeds.feedburner.com/alistapart/main
+
+# entertainmenti ;)
+http://boli.blog.pl/feed/
+http://xkcd.com/atom.xml
+

@@ -2,11 +2,20 @@
 
 #set -x
 
-ans_hist=""
-expr_hist="scale=10"
+ans_hist=''
+expr_hist='scale=10'
 last_ans_len=0
 
-while expr=$(echo -e -n "$ans_hist" | dmenu -l 10 -p 'calculate'); do
+while :; do
+  if [[ "$1" ]]; then
+    expr="$1"
+    shift
+  else
+    expr="$(echo -e -n "$ans_hist" | dmenu -l 10 -p 'calculate')"
+  fi
+
+  [[ $? -ne 0 ]] && break
+
   if [[ "$expr" = "!copy" ]]; then
     echo -n "$ans" | xsel -b -i
     continue

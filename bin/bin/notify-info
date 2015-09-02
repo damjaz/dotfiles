@@ -1,0 +1,44 @@
+#!/bin/bash
+
+. ~/bin/color-scheme
+
+battery_info() {
+  local battery_dir battery_status charge_now charge_full percents
+
+  battery_dir='/sys/class/power_supply/BAT0'
+  battery_status="$(< "$battery_dir/status")"
+  battery_status="${battery_status,,}"
+
+  charge_now="$(< "$battery_dir/charge_now")"
+  charge_full="$(< "$battery_dir/charge_full")"
+  percents="$(( charge_now * 100 / charge_full ))"
+  battery_status="$battery_status $percents%%"
+
+  printf "$battery_status"
+}
+
+# date and time
+notifybody="Time: <span color=\"#$COL15\">$(date '+%H:%M')</span>\n"
+day="$(date '+%a')"
+notifybody+="Date: ${day,,} <span color=\"#$COL15\">$(date '+%-d %b')</span> $(date '+%Y')\n\n"
+
+# volume
+vol=$(amixer sget Master | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]')
+case $vol in
+  *off) vol="<span color=\"#$COL1\">$vol</span>"
+esac
+
+notifybody+="Volume: $vol\n"
+
+# battery
+bat="$(battery_info)"
+case $bat in
+  discharging*) bat="<span color=\"#$COL1\">$bat</span>"
+esac
+notifybody+="Battery: $bat\n\n"
+
+# uptime
+notifybody+="Uptime: $(uptime -p | cut -d' ' -f2-)\n"
+
+# show notification
+notify-send -u normal "[ info ]" "$notifybody"

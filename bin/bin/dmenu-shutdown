@@ -1,8 +1,13 @@
 #!/bin/bash
 
-action="$(dmenu -l 3 <<< $'\nShutdown\nReboot')"
+action="$(dmenu -l 4 <<< $'\nExit WM\nShutdown\nReboot')"
+
+if [[ "$action" ]]; then
+  bspwm-quit
+fi
 
 case "$action" in
+  'Exit WM')  : ;;
   'Shutdown') sudo shutdown -h now ;;
   'Reboot') sudo shutdown -r now ;;
 esac

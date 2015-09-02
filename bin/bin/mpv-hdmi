@@ -1,8 +1,12 @@
 #!/bin/bash
 
-# best possible solution right now
-# screen is fucked up :e
+# it works
 
-xrandr --output HDMI1 --mode 1280x720
+xset s noblank
+xset s off
+xset dpms 0 0 0
+xset -dpms
+
+xrandr --output HDMI1 --mode 1024x768 --output LVDS1 --mode 1024x768
 mpv --ao=alsa:resample=yes:device=[hw:0,3] "$@" 
-xrandr --output HDMI1 --off
+xrandr --output HDMI1 --off --output LVDS1 --auto

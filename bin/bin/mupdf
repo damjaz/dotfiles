@@ -1,0 +1,15 @@
+#!/bin/bash
+
+[[ $# -gt 0 ]] || exit
+
+dir="$HOME/.cache/mupdf"
+file="$dir/$(basename "$1")"
+
+page="${2:-0}"
+if [[ -f "$file" ]]; then
+  page="$(< "$file")"
+fi
+
+page="$(mupdf-x11-curl "$1" "$page" 2>/dev/null)"
+printf '%s' "$page" > "$file"
+

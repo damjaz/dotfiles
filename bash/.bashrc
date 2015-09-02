@@ -67,6 +67,7 @@ export VISUAL='vim'
 export PAGER='less'
 export BROWSER='chromium'
 export PATH="$HOME/bin:$PATH"
+export LANG=en_US.utf8
 
 alias ls='ls -hX --color=auto --group-directories-first'
 alias lt='ls -t'
@@ -82,6 +83,13 @@ alias mkdir='mkdir -p -v'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
+
+cd() {
+  builtin cd "$@"
+  if [[ $# -gt 0 ]]; then
+    ls -t
+  fi
+}
 
 # navigation system
 #export MARKPATH="$HOME/.marks"
@@ -125,5 +133,10 @@ if shopt -q progcomp && [[ -r /usr/share/bash-completion/bash_completion ]]; the
   . /usr/share/bash-completion/bash_completion
 fi
 
+# learn 1 thing from man every time you open the console 
+#echo
+#man -k $(find /usr/share/man/man[1-8]/ -not -name '*_*' -not -name '*::*' -printf "%f\n" |shuf -n 1|cut -d. -f1) |head -n 1
+#echo
+
 # start X automatically after login on tty1
-[[ $(tty) = '/dev/tty1' ]] && exec startx
+[[ $(tty) = '/dev/tty1' ]] && exec xinit -- -nolisten tcp vt06

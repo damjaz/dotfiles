@@ -1,0 +1,29 @@
+auto-reload yes
+cleanup-on-quit yes
+show-read-feeds no
+refresh-on-startup yes
+
+notify-always yes
+notify-format "newsbeuter: %n unread articles within %f unread feeds"
+notify-program notify-send
+
+browser chromium
+player mpv
+
+# binds
+
+bind-key "SPACE" open
+
+highlight feedlist    "^  *[0-9]+  *N  "                    color1 default
+highlight articlelist "^  *[0-9]+  *N  "                    color1 default
+
+highlight article     "(^Feed:.*|^Title:.*|^Author:.*)"     color2  default
+highlight article     "(^Link:.*|^Date:.*)"                 color4  default
+highlight article     "^Podcast Download URL:.*"            color4  default
+#highlight article     "^Links:"                             color15 color240 underline
+#highlight article     "\\[[0-9][0-9]*\\]"                   color72  default  bold
+#highlight article     "\\[image [0-9][0-9]*\\]"             color72  default  bold
+#highlight article     "\\[embedded flash: [0-9][0-9]*\\]"   color72  default  bold
+highlight article     ":.*\\(link\\)$"                      color1  default
+highlight article     ":.*\\(image\\)$"                     color1  default
+

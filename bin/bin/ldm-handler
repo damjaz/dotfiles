@@ -1,4 +1,10 @@
 #!/bin/bash
 
-printf '[%s] %sED %s in %s\n' "$(date '+%Y-%m-%d %H:%M')" "${LDM_ACTION^^}" "$LDM_NODE" "$LDM_MOUNTPOINT" 
+# A script that runs as root, needs these 2 set, to use the GUI
+export DISPLAY=:0
+export XAUTHORITY=/home/damian/.Xauthority
+
+. /home/damian/bin/color-scheme
+
+/usr/bin/notify-send -u normal "${LDM_ACTION}ed" "    device: $LDM_NODE\nfilesystem: $LDM_FS\n\nmountpoint: <span color=\"#$COL15\">$LDM_MOUNTPOINT</span>"
 

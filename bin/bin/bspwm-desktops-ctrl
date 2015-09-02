@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. ~/bin/color-scheme
+
+bspc desktop -f "$@"
+
+desktops_list() {
+  local bspwm_status desktops field
+
+  bspwm_status="$(bspc control --get-status)"
+  bspwm_status=(${bspwm_status//:/ })
+  desktops=''
+
+  for field in "${bspwm_status[@]}"; do
+    case $field in
+      O*|U*|F*)
+        desktops+="<span color=\"#$COL1\">${field#?}</span> "
+        ;;
+      o*|u*|f*)
+        desktops+="${field#?} "
+        ;;
+    esac
+  done
+
+  printf "${desktops%?}"
+}
+
+notify-send -u low "$(desktops_list)"

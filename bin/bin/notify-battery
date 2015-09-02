@@ -1,0 +1,30 @@
+#!/bin/bash
+
+export DISPLAY=:0
+export XAUTHORITY=/home/damian/.Xauthority
+
+battery_dir='/sys/class/power_supply/BAT0'
+ac_dir='/sys/class/power_supply/AC0'
+battery_status="$(< "$battery_dir/status")"
+ac_status="$(< "$ac_dir/online")"
+
+#/usr/bin/notify-send -u critical "AC is $ac_status"
+
+battery_widget() {
+  local battery_dir battery_status charge_now charge_full percents
+
+  case $battery_status in
+    *charging)
+      charge_now="$(< "$battery_dir/charge_now")"
+      charge_full="$(< "$battery_dir/charge_full")"
+      percents="$(( charge_now * 100 / charge_full ))"
+      battery_status="$battery_status $percents%%"
+      ;;&
+    full|charging)
+      battery_status="%{F#ff$COL3}$battery_status%{F-}"
+      ;;
+    *)
+      battery_status="%{F#ff$COL1}$battery_status%{F-}"
+      ;;
+  esac
+}
