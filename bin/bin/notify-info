@@ -27,7 +27,6 @@ vol=$(amixer sget Master | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]')
 case $vol in
   *off) vol="<span color=\"#$COL1\">$vol</span>"
 esac
-
 notifybody+="Volume: $vol\n"
 
 # battery
@@ -41,4 +40,4 @@ notifybody+="Battery: $bat\n\n"
 notifybody+="Uptime: $(uptime -p | cut -d' ' -f2-)\n"
 
 # show notification
-notify-send -u normal "[ info ]" "$notifybody"
+notify-send -u normal " " "$notifybody"

@@ -24,4 +24,4 @@ bspc rule -a mpv desktop=^3 fullscreen=on
 aplay ~/bin/ava_hello.wav &
 notify-send "<span color=\"#$COL1\">Welcome ${USER^}</span>"
 notify-info
-
+notify-reminders
