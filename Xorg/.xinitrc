@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set arrow cursor
-xsetroot -cursor_name left_ptr &
+xsetroot -cursor_name left_ptr -fg '#d42228' -bg 'black'
 
 # keyboard repeat delay and rate
 xset r rate 300 30 &
@@ -40,9 +40,9 @@ setroot -z ~/images/wallpapers/current &
 redshift &
 
 # hotkeys
-sxhkd > /tmp/sxhkd.log 2>&1 &
+sxhkd > ~/.sxhkd.log 2>&1 &
 
 # window manager
-exec bspwm > /tmp/bspwm.log 2>&1 
+exec bspwm > ~/.bspwm.log 2>&1 
 
 

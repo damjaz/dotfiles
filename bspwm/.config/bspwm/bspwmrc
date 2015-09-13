@@ -11,14 +11,14 @@ bspc config gapless_monocle true
 bspc config focused_border_color "#$COL8"
 bspc config normal_border_color "#$COL0"
 bspc config presel_border_color "#$COL15"
-bspc config focused_locked_border_color "#$COL1"
+bspc config focused_locked_border_color "#$COL3"
 
 bspc monitor -d 1 2 3 4
 bspc desktop ^2 -l monocle
 
 bspc rule -a xmessage floating=on center=on
 bspc rule -a Chromium desktop=^2 locked=on
-bspc rule -a mpv desktop=^3 fullscreen=on
+#bspc rule -a mpv desktop=^3 fullscreen=on
 
 # welcome message
 aplay ~/bin/ava_hello.wav &

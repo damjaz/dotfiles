@@ -3,6 +3,6 @@
 reminders="$(remind -h $HOME/documents/reminders/main.rem | nl -w1 -s'. ')"
 
 if [[ "$reminders" ]]; then
-  notify-send -u critical 'Reminders' '<span color="#929292">'"$reminders"'</span>'
+  notify-send -u "${1:-critical}" 'Reminders' '<span color="#929292">'"$reminders"'</span>'
 fi
 

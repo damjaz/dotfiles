@@ -1,0 +1,61 @@
+#!/bin/bash
+
+. color-scheme
+
+notify_current_song() {
+  song="$(mpc currentsong)"
+  local title='' album='' artist='' file='' msg=''
+  
+  while read -r line; do
+    case "$line" in
+      file:*) file="${line#*: }" ;;
+      Title:*) title="${line#*: }" ;;
+      Album:*) album="${line#*: }" ;;
+      Artist:*) artist="${line#*: }" ;;
+    esac
+  done <<< "$song" # <(mpc currentsong) # alt option
+  
+  if [[ "$title" ]]; then
+    # for unknown reason dunst (pango markup lang) gets fuckd when notify contains '&' sign
+    title="${title//&/&amp;}"
+    artist="${artist//&/&amp;}"
+    album="${album//&/&amp;}"
+    printf -v msg '<span color="#%s">%s</span>\n%s\n%s' "$COL3" "$title" "$artist" "$album"
+  else
+    printf -v msg '<span color="#%s">%s</span>\n%s' "$COL1" 'No tags' "${file//\//\/\\n}"
+  fi
+
+  notify-send -u normal ' ' "$msg"
+}
+
+case "$1" in
+  toggle)
+    state="$(mpc 'status' | grep 'state' | cut -d' ' -f2)"
+    case "$state" in
+      stop) 
+        mpc play
+        notify_current_song
+        ;;
+      pause) 
+        mpc pause 0 
+        notify_current_song
+        ;;
+      play) 
+        mpc pause 1 
+        notify-send -u low ' ' '<span color="#'"$COL1"'">playback paused</span>'
+        ;;
+    esac
+    ;;
+  next|previous)
+    mpc "$1"
+    notify_current_song
+    ;;
+  stop)
+    mpc stop
+    notify-send -u low ' ' '<span color="#'"$COL1"'">playback stopped</span>'
+    ;;
+  *)
+    mpc "$*"
+    ;;
+esac
+

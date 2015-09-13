@@ -14,3 +14,21 @@ check_hash = yes
 directory = ~/downloads
 session = ~/downloads/.rtorrent.session
 
+# Watch a directory for new torrents, and stop those that have been
+# deleted.
+# schedule = watch_directory,5,5,load_start=./rtactive/*.torrent
+#schedule = tied_directory,6,5,start_tied=
+#schedule = untied_directory,7,5,stop_untied=
+
+# Close torrents when diskspace is low.
+#schedule = low_diskspace,5,60,close_low_diskspace=2000M
+
+# Periodically save session data
+#schedule = session_save,240,300,session_save=
+
+# When seeding ratio is reached close the torrent
+#system.method.set = group.seeding.ratio.command, d.close=
+
+# Move files to ./unsorted when download completes
+#system.method.set_key = event.download.finished,move_complete,"execute=mv,-n,$d.get_base_path=,./unsorted/;d.set_directory=./unsorted/"
+

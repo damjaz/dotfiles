@@ -1,6 +1,4 @@
 #
-r
-r
 # bspwm hotkeys
 #
 
@@ -35,6 +33,10 @@ super + x ; {1-9, 0}
 super + x ; {a, d, w, s}
   bspc window focused -s {left, right, up, down}
 
+# rotate, equal, cycle windows in active desktop
+super + x ; {r, e, c}
+  bspc desktop focused -{R 90,E,C forward}
+
 # focus another window
 super + {a, d, w, s, Tab}
   bspc window focused -f {left, right, up, down, next}
@@ -50,10 +52,6 @@ super + {1-9, 0}
 # maximize window
 super + z
   bspc desktop focused -l next
-
-# rotate, equal, cycle windows in active desktop
-super + {r, e, c}
-  bspc desktop focused -{R 90,E,C forward}
 
 ~button1
   bspc pointer -g focus
@@ -87,12 +85,25 @@ XF86MonBrightnessUp
 XF86MonBrightnessDown
   xbacklight -10
 
+XF86AudioNext
+  mpd-ctrl next
+
+XF86AudioPrev
+  mpd-ctrl previous;
+
+XF86AudioStop
+  mpd-ctrl stop
+
+XF86AudioPlay
+  mpd-ctrl toggle
+
 #
 # applications/scripts hotkeys
 #
 
 super + Escape
-  notify-info
+  notify-info; \
+  notify-reminders normal
 
 super + o
   LANG=en_US.utf8 st -e ncmpcpp

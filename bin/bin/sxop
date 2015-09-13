@@ -1,0 +1,18 @@
+#!/bin/bash
+ 
+case $# in
+  0) 
+    sxiv -rt . 
+    ;;
+  1) 
+    if [[ -d "$1" ]]; then
+      sxiv -rt "$1"
+    else
+      sxiv "$1"
+    fi
+    ;;
+  *) 
+    sxiv "$@" 
+    ;;
+esac
+
