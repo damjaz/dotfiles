@@ -31,4 +31,3 @@ session = ~/downloads/.rtorrent.session
 
 # Move files to ./unsorted when download completes
 #system.method.set_key = event.download.finished,move_complete,"execute=mv,-n,$d.get_base_path=,./unsorted/;d.set_directory=./unsorted/"
-

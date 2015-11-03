@@ -3,6 +3,7 @@
 exec 6<>/dev/tcp/localhost/6600
 
 if [[ $? -ne 0 ]]; then
+  notify-send -u low " " "starting mpd..."
   mpd > /dev/null 2>&1
   [[ $? -eq 0 ]] || exit
 
@@ -10,5 +11,5 @@ if [[ $? -ne 0 ]]; then
   [[ $? -eq 0 ]] || exit
 fi
 
-printf '%s\nclose\n' "$*" >&6
+printf '%s\nclose\n' "${*:-ping}" >&6
 cat <&6

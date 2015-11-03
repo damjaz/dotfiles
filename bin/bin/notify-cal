@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. color-scheme
+
+z="$(ncal -M -C)" # start week on monday
+x="${z%%_*}"
+y="${z##*_}"
+notify-send " " "$x <span color=\"\#$COL1\">${y/ /</span> }"

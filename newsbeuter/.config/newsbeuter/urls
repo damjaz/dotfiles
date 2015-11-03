@@ -6,6 +6,7 @@ http://feeds.feedburner.com/codinghorror
 http://blog.cleancoder.com/atom.xml
 http://ruslanspivak.com/feeds/all.atom.xml
 http://www.codeproject.com/WebServices/ArticleRSS.aspx
+http://feeds.feedburner.com/igoro
 
 # general linux
 http://lwn.net/headlines/newrss
@@ -28,5 +29,5 @@ http://feeds.feedburner.com/alistapart/main
 
 # entertainmenti ;)
 http://boli.blog.pl/feed/
-http://xkcd.com/atom.xml
+#http://xkcd.com/atom.xml # too intelligent xD
 

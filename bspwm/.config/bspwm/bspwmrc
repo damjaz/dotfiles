@@ -17,11 +17,14 @@ bspc monitor -d 1 2 3 4
 bspc desktop ^2 -l monocle
 
 bspc rule -a xmessage floating=on center=on
-bspc rule -a Chromium desktop=^2 locked=on
+bspc rule -a chromium-browser desktop=^2 locked=on
 #bspc rule -a mpv desktop=^3 fullscreen=on
 
 # welcome message
 aplay ~/bin/ava_hello.wav &
-notify-send "<span color=\"#$COL1\">Welcome ${USER^}</span>"
+notify-send '<span color="#'"$COL1"'">Welcome '"${USER^}"'</span>'
 notify-info
 notify-reminders
+
+# reload rss feeds silently
+newsbeuter -x reload &
