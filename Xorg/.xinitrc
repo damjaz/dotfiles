@@ -7,7 +7,11 @@ xsetroot -cursor_name left_ptr -fg '#d42228' -bg 'black'
 xset r rate 300 30 &
 
 # disable caps lock
-setxkbmap -option caps:none &
+#setxkbmap -option caps:none &
+
+# set caps lock to behave like esc when tapped
+setxkbmap -option 'caps:ctrl_modifier' &
+xcape -e 'Caps_Lock=Escape' &
 
 # disable F5, keyboard is freaking out and randomly spamming this key
 #xmodmap -e 'keycode 71=' &

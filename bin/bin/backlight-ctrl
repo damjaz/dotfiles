@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# temporary workaround xDDDDDD
+
+max="$(< /sys/class/backlight/intel_backlight/max_brightness)"
+cur="$(< /sys/class/backlight/intel_backlight/brightness)"
+min="${max%?}" # 10%
+
+case "$1" in
+  inc)
+    newb="$max"
+    if (( cur + min < max )); then
+      newb=$(( cur +  min ))
+    fi
+    ;;
+
+  dec)
+    newb="$min"
+    if (( cur - min > min )); then
+      newb=$(( cur - min ))
+    fi
+    ;;
+esac
+
+sudo tee /sys/class/backlight/intel_backlight/brightness <<< "$newb"

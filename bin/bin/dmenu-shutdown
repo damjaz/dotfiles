@@ -1,6 +1,6 @@
 #!/bin/bash
 
-action="$(dmenu -l 4 <<< $'\nExit WM\nShutdown\nReboot')"
+action="$(dmenu -l 4 <<< $'\nReboot\nShutdown\nExit WM')"
 
 if [[ "$action" ]]; then
   bspwm-quit

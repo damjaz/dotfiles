@@ -4,5 +4,11 @@
 
 z="$(ncal -M -C)" # start week on monday
 x="${z%%_*}"
-y="${z##*_}"
-notify-send " " "$x <span color=\"\#$COL1\">${y/ /</span> }"
+y="${z#*_}"
+
+# fix for 2 digit dates
+y="${y/_/}"
+yl="${y:0:1}"
+yr="${y:1}"
+
+notify-send " " "${x}<span color=\"\#$COL1\">${yl}${yr/ /</span> }"

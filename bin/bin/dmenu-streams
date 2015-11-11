@@ -16,8 +16,8 @@ dmenu='dmenu -i -l 20 -p twitch.tv'
 
 openchat='yes'
 username='boltiedies'
-oauth='oauth:slb3l71hbrpk28lp7pu3ae7sb3ei1vj'
-terminal='st'
+oauth='oauth:ripzywwmot57psoz6xz4zb3rbfdoz9'
+terminal='st -c dmenu-streams-chat'
 
 #
 # End of config
@@ -66,7 +66,7 @@ channel_open() {
   local channel_name="${1%% *}"
 
   [[ "$openchat" == 'yes' ]] && $terminal -e "$0" 'chat' "$channel_name" &
-  exec livestreamer -p "$player" "http://www.twitch.tv/${channel_name,,}" "$quality" >/dev/null
+  exec livestreamer -p "$player" "http://www.twitch.tv/${channel_name,,}" "$quality" >/dev/null 2>&1
 }
 
 menu_main() {

@@ -80,10 +80,10 @@ XF86AudioMute
 
 # screen brightness
 XF86MonBrightnessUp
-  xbacklight +10
+  backlight-ctrl inc
 
 XF86MonBrightnessDown
-  xbacklight -10
+  backlight-ctrl dec
 
 XF86AudioNext
   mpd-ctrl next
@@ -109,10 +109,11 @@ super + c
   notify-reminders normal
 
 super + o
-  LANG=en_US.utf8 st -e ncmpcpp
+  mpc ping; \
+  st -c "ncmpcpp" -e ncmpcpp
 
 super + m
-  LANG=en_US.utf8 st -e mc -S gotar / ~
+  st -e mc ~ /
 
 super + i
   chromium
