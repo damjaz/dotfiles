@@ -1,30 +1,45 @@
 #!/bin/bash
 
-export DISPLAY=:0
-export XAUTHORITY=/home/damian/.Xauthority
+. color-scheme
+
+#export DISPLAY=:0
+#export XAUTHORITY=/home/damian/.Xauthority
 
 battery_dir='/sys/class/power_supply/BAT0'
-ac_dir='/sys/class/power_supply/AC0'
-battery_status="$(< "$battery_dir/status")"
-ac_status="$(< "$ac_dir/online")"
+#ac_dir='/sys/class/power_supply/AC0'
+#ac_status="$(< "$ac_dir/online")"
 
-#/usr/bin/notify-send -u critical "AC is $ac_status"
+# asos battery is fucked up, cutting power down near 25%
+WARNING_LEVEL=50
+SHUTDOWN_LEVEL=30
+warned=0
 
-battery_widget() {
-  local battery_dir battery_status charge_now charge_full percents
+while :; do
+  battery_status="$(< "$battery_dir/status")"
 
-  case $battery_status in
-    *charging)
-      charge_now="$(< "$battery_dir/charge_now")"
-      charge_full="$(< "$battery_dir/charge_full")"
-      percents="$(( charge_now * 100 / charge_full ))"
-      battery_status="$battery_status $percents%%"
-      ;;&
-    full|charging)
-      battery_status="%{F#ff$COL3}$battery_status%{F-}"
-      ;;
-    *)
-      battery_status="%{F#ff$COL1}$battery_status%{F-}"
-      ;;
-  esac
-}
+  if [[ "$battery_status" = 'Discharging' ]]; then
+    charge_now="$(< "$battery_dir/charge_now")"
+    charge_full="$(< "$battery_dir/charge_full")"
+    power="$(( charge_now * 100 / charge_full ))"
+  
+    if (( power < SHUTDOWN_LEVEL )); then
+      if (( ! warned )); then
+        notify-send -u critical "Critical battery power ($power%)" \
+          "Plug in the AC adapter or system will shut down in <span color=\"\#$COL1\">1 minute</span>."
+        warned=1
+      else
+        notify-send -u critical " " "<span color=\"\#$COL1\">System shutdown in 5 seconds...</span>"
+        sleep 5s
+        sudo shutdown -h now
+      fi
+    elif (( power < WARNING_LEVEL )); then
+      notify-send -u normal "Low battery power ($power%)" \
+        "<span color=\"\#$COL15\">Please plug in the AC adapter.</span>"
+    fi
+
+  elif (( warned )); then
+    warned=0
+  fi
+
+  sleep 1m
+done

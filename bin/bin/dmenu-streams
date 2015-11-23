@@ -16,7 +16,7 @@ dmenu='dmenu -i -l 20 -p twitch.tv'
 
 openchat='yes'
 username='boltiedies'
-oauth='oauth:ripzywwmot57psoz6xz4zb3rbfdoz9'
+oauth='oauth:4uq0ff8an7wlxen2dauwkoz6ticngu'
 terminal='st -c dmenu-streams-chat'
 
 #
@@ -91,10 +91,10 @@ con_output() {
   #msg="${msg//[^a-z0-9 \.\/\:\;-_=+]}"
 
   # color highlighting, priority from lower to higher
-  [[ "$src" == 'jtv' ]]          && color=32
-  [[ "$src" == 'moonbot' ]]      && color=32
-  [[ "$src" == 'nightbot' ]]     && color=32
-  [[ "$src" == 'xanbot' ]]       && color=32
+  [[ "$src" == 'jtv' ]]          && color=33
+  [[ "$src" == 'moobot' ]]       && color=33
+  [[ "$src" == 'nightbot' ]]     && color=33
+  [[ "$src" == 'xanbot' ]]       && color=33
   [[ "$src" == "$channel" ]]     && color=35 # msg from channel owner
   [[ "$msg" == *"$username"* ]]  && color=31 # msg containing my username
   [[ "$dst" == "$username" ]]    && color=31 # msg TO me from user/channel

@@ -8,36 +8,50 @@ battery_info() {
   battery_dir='/sys/class/power_supply/BAT0'
   battery_status="$(< "$battery_dir/status")"
   battery_status="${battery_status,,}"
+  battery_status="${battery_status/unknown/}"
 
   charge_now="$(< "$battery_dir/charge_now")"
   charge_full="$(< "$battery_dir/charge_full")"
   percents="$(( charge_now * 100 / charge_full ))"
-  battery_status="$battery_status $percents%%"
+  battery_status="$percents%% $battery_status"
 
   printf "$battery_status"
 }
 
 # date and time
-notifybody="Time: <span color=\"#$COL15\">$(date '+%H:%M')</span>\n"
+notifybody="Time: <span color=\"\#$COL15\">$(date '+%H:%M')</span>\n"
 day="$(date '+%a')"
-notifybody+="Date: ${day,,} <span color=\"#$COL15\">$(date '+%-d %b')</span> $(date '+%Y')\n\n"
+notifybody+="Date: ${day,,} <span color=\"\#$COL15\">$(date '+%-d %b')</span> $(date '+%Y')\n\n"
 
 # volume
 vol=$(amixer sget Master | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]')
 case $vol in
-  *off) vol="<span color=\"#$COL1\">$vol</span>"
+  *off) vol="<span color=\"\#$COL1\">${vol/off/muted}</span>"
 esac
 notifybody+="Volume: $vol\n"
 
 # battery
 bat="$(battery_info)"
 case $bat in
-  discharging*) bat="<span color=\"#$COL1\">$bat</span>"
+  *discharging*) bat="<span color=\"\#$COL1\">$bat</span>"
 esac
-notifybody+="Battery: $bat\n\n"
+notifybody+="Battery: $bat\n"
+
+# wlan ssid
+ssid="$(sudo iwgetid -r)"
+if [[ "$ssid" ]]; then
+  ssid+=" ($(sudo iwconfig wlan0 | grep 'Signal' | cut -d'=' -f3 | tr -d ' '))"
+else
+  ssid="<span color=\"\#$COL1\">not connected</span>"
+fi
+notifybody+="Wi-Fi: $ssid\n\n"
 
 # uptime
-notifybody+="Uptime: $(uptime -p | cut -d' ' -f2-)\n"
+uptime="$(uptime -p | cut -d' ' -f2-)"
+if [[ ! "$uptime" ]]; then
+  uptime="&lt; 1 minute"
+fi
+notifybody+="Uptime: $uptime\n"
 
 # show notification
 notify-send -u normal " " "$notifybody"

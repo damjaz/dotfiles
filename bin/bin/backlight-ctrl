@@ -4,7 +4,7 @@
 
 max="$(< /sys/class/backlight/intel_backlight/max_brightness)"
 cur="$(< /sys/class/backlight/intel_backlight/brightness)"
-min="${max%?}" # 10%
+min="$(( max / 10 ))" # 10%
 
 case "$1" in
   inc)
@@ -20,6 +20,12 @@ case "$1" in
       newb=$(( cur - min ))
     fi
     ;;
+
+  *)
+    newb="$cur"
+    ;;
 esac
 
 sudo tee /sys/class/backlight/intel_backlight/brightness <<< "$newb"
+#notify-send -u low " " "backlight $(( newb / min * 10 ))%"
+

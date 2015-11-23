@@ -81,6 +81,7 @@ alias lex='list_extensions'
 
 alias ..='cd ..'
 alias ...='cd ../..'
+alias :q='exit'
 
 alias df='df -h'
 alias du='du -d 1 -h'
@@ -89,6 +90,7 @@ alias mkdir='mkdir -p -v'
 alias rmf='rm -rf'
 alias sysup='sudo apt-get update && sudo apt-get dist-upgrade'
 alias yt2mp3='youtube-dl -x --audio-format mp3 --audio-quality  0 --prefer-ffmpeg'
+alias redshifttoggle='pkill -USR1 redshift'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'

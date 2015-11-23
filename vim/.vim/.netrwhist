@@ -1,8 +1,10 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_cnt =8
 let g:netrw_dirhist_1='/home/damian/.config/sxhkd'
 let g:netrw_dirhist_2='/home/damian/.config/youtube-dl'
 let g:netrw_dirhist_3='/home/damian'
 let g:netrw_dirhist_4='/etc/console-setup'
 let g:netrw_dirhist_5='/etc/modules-load.d'
 let g:netrw_dirhist_6='/home/damian/projects/re-primer'
+let g:netrw_dirhist_7='/etc/network/if-up.d'
+let g:netrw_dirhist_8='/etc/modules-load.d'

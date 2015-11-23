@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# bring up default network interface
+sudo ifup wlan0 &
+
 # set arrow cursor
 xsetroot -cursor_name left_ptr -fg '#d42228' -bg 'black'
 
