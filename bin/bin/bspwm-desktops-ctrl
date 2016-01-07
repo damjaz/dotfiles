@@ -4,20 +4,26 @@
 
 bspc desktop -f "$@"
 
+id='/tmp/dunst-desktop-ctrl-id'
+[[ ! -s $id ]] && echo 0 > $id
+
 desktops_list() {
   local bspwm_status desktops field
 
-  bspwm_status="$(bspc control --get-status)"
+  #bspwm_status="$(bspc control --get-status)" v0.9~
+  bspwm_status="$(bspc wm --get-status)"
   bspwm_status=(${bspwm_status//:/ })
   desktops=''
 
   for field in "${bspwm_status[@]}"; do
     case $field in
       O*|U*|F*)
-        desktops+="<span color=\"#$COL1\">${field#?}</span> "
+        desktops+='<span color="#'$COL1'">'${field#?}'</span> '
+        #desktops+='<span color="#'$COL1'" font="Siji 8">'${field#?}'</span> '
         ;;
       o*|u*|f*)
         desktops+="${field#?} "
+        #desktops+='<span font="Siji 8">'"${field#?}</span> "
         ;;
     esac
   done
@@ -25,4 +31,4 @@ desktops_list() {
   printf "${desktops%?}"
 }
 
-notify-send -u low "$(desktops_list)"
+dunstify -p -r $(< $id) -u low "$(desktops_list)" > $id

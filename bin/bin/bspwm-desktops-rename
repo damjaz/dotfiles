@@ -1,6 +1,6 @@
 #!/bin/bash
 
-desktops="$(bspc control --get-status)"
+desktops="$(bspc wm --get-status)"
 desktops="${desktops#*:}"
 desktops="${desktops%:*}"
 desktops=(${desktops//:/ })

@@ -2,7 +2,10 @@
 
 . color-scheme
 
-z="$(ncal -M -C)" # start week on monday
+id='/tmp/notify-cal-id'
+[[ ! -f $id ]] && echo 0 > $id
+
+z="$(ncal -M $1 -C)" # start week on monday
 x="${z%%_*}"
 y="${z#*_}"
 
@@ -11,4 +14,4 @@ y="${y/_/}"
 yl="${y:0:1}"
 yr="${y:1}"
 
-notify-send " " "${x}<span color=\"\#$COL1\">${yl}${yr/ /</span> }"
+dunstify -p -r $(< $id) -u ${2:-normal}  "${x}<span color=\""'#'"$COL1"'">'"${yl}${yr/ /</span> }" > $id

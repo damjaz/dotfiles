@@ -16,7 +16,7 @@ set -o notify
 # An interactive shell will not exit upon reading EOF.
 set -o ignoreeof
 # Disable '!' style history substitution.
-set +o histexpand
+#set +o histexpand
 
 
 
@@ -85,18 +85,25 @@ alias :q='exit'
 
 alias df='df -h'
 alias du='du -d 1 -h'
+alias ps?='ps aux | grep'
 
 alias mkdir='mkdir -p -v'
 alias rmf='rm -rf'
 alias sysup='sudo apt-get update && sudo apt-get dist-upgrade'
-alias yt2mp3='youtube-dl -x --audio-format mp3 --audio-quality  0 --prefer-ffmpeg'
+alias youtube-dl='youtube-dl --prefer-ffmpeg'
+alias yt2mp3='youtube-dl -x --audio-format mp3 --audio-quality 0 --prefer-ffmpeg'
+alias eyeD3='eyeD3 --no-tagging-time-frame'
+alias id3='eyeD3'
 alias redshifttoggle='pkill -USR1 redshift'
 
 alias debug="set -o nounset; set -o xtrace"
 alias path='echo -e ${PATH//:/\\n}'
 
-alias vibsp='vim ~/.config/bspwm/bspwmrc'
-alias visxh='vim ~/.config/sxhkd/sxhkdrc'
+alias vibspwm='vim ~/.config/bspwm/bspwmrc'
+alias visxhkd='vim ~/.config/sxhkd/sxhkdrc'
+alias vibash='vim ~/.bashrc'
+alias vixinit='vim ~/.xinitrc'
+alias viinput='vim ~/.inputrc'
 
 alias cdb='cd ~/bin'
 alias cdbo='cd ~/documents/books'
@@ -114,6 +121,14 @@ cd() {
 
 list_extensions() {
   find . -maxdepth ${1:-1} -type f 2>/dev/null | sed 's/.*\.//' | sort | uniq -c
+}
+
+mntw() {
+  mount /mnt/win_$1 && cd /mnt/win_$1
+}
+
+setwall() {
+  ln -T -f -s $1 
 }
 
 # navigation system

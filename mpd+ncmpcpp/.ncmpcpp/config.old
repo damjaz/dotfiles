@@ -1,3 +1,5 @@
+mpd_host = "localhost"
+mpd_port = "6600"
 mpd_music_dir = "/home/damian/music/"
 lyrics_directory = "/home/damian/.ncmpcpp/lyrics"
 mpd_crossfade_time = "5"

@@ -6,12 +6,13 @@
 #export XAUTHORITY=/home/damian/.Xauthority
 
 battery_dir='/sys/class/power_supply/BAT0'
+charge_full="$(< "$battery_dir/charge_full")"
 #ac_dir='/sys/class/power_supply/AC0'
 #ac_status="$(< "$ac_dir/online")"
 
-# asos battery is fucked up, cutting power down near 25%
-WARNING_LEVEL=50
-SHUTDOWN_LEVEL=30
+# asos battery is fucked up, cutting power down randomly 0-50%
+WARNING_LEVEL=80
+SHUTDOWN_LEVEL=50
 warned=0
 
 while :; do
@@ -19,7 +20,6 @@ while :; do
 
   if [[ "$battery_status" = 'Discharging' ]]; then
     charge_now="$(< "$battery_dir/charge_now")"
-    charge_full="$(< "$battery_dir/charge_full")"
     power="$(( charge_now * 100 / charge_full ))"
   
     if (( power < SHUTDOWN_LEVEL )); then

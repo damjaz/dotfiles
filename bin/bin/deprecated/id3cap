@@ -1,0 +1,35 @@
+#!/bin/bash
+
+for mp3file; do
+  declare -A id3tags
+  while read -r line; do
+    case "$line" in
+      Title*) id3tags[title]="${line#*: }" ;;
+      Artist*) id3tags[artist]="${line#*: }" ;;
+      Album*) id3tags[album]="${line#*: }" ;;
+      Track*) id3tags[track]="${line#*: }" ;;
+      Year*) id3tags[year]="${line#*: }" ;;
+    esac
+  done < <(eyeD3 --rfc822 "$mp3file")
+
+  if [[ ${#id3tags[@]} -eq 0 ]]; then
+    printf 'No tags in "%s"\n' "$mp3file"
+    eyeD3 --remove-all "$mp3file"
+    continue
+  fi
+
+  #eyeD3 --remove-all "$mp3file" > /dev/null 2>&1
+  printf 'Retagging "%s"\n' "$mp3file"
+
+  for tag in "${!id3tags[@]}"; do
+    newtag=(${id3tags[$tag]})
+    newtag="${newtag[*]^}"
+    newtag="$(tr -cd '[:print:]' <<< "$newtag")" # strip non printable ascii characters
+    if [[ "${id3tags[$tag]}" != "$newtag" ]]; then
+      printf '  %s: %s -> %s\n' "$tag" "${id3tags[$tag]}" "$newtag"
+      eyeD3 --$tag="$newtag" "$mp3file"
+    fi
+  done
+  
+  unset -v id3tags
+done

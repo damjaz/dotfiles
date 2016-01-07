@@ -2,16 +2,13 @@
 
 . color-scheme
 
-#LOCKFILE='/tmp/volctl.lock'
-voldata=($(amixer sset Master "$@" | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]%'))
+id='/tmp/dunst-volume-ctrl-id'
+[[ ! -s $id ]] && echo 0 > $id
 
-#[[ -f "$LOCKFILE" ]] &&  exit 1;
-#touch "$LOCKFILE"
-#sleep 1
-#rm "$LOCKFILE"
+voldata=($(amixer -D pulse sset Master "$@" | tail -n 1 | cut -d' ' -f7,8 | tr -d '[]%'))
 
 if [[ ${voldata[1]} = 'off' ]]; then
-  notify-send -u normal "<span color=\"#$COL1\">audio muted</span>"
+  dunstify -p -r $(< $id) -u normal $'<span font="Siji 8">\ue202</span> <span color="#'$COL1'">audio muted</span>'  > $id
 else
-  notify-send -u low "volume ${voldata[0]}%"
+  dunstify -p -r $(< $id) -u low " " $'<span font="Siji 8">\ue203</span>'" ${voldata[0]}%" > $id
 fi

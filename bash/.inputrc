@@ -35,6 +35,9 @@ set show-all-if-unmodified on
 # Alt-s Prefix the line with sudo
 "\es": "\C-asudo \C-e"
 
+# Alt-d Home dir
+"\ed": "~/"
+
 # Ctrl-Alt-l Append | less to line and run it
 "\e\C-l": "\C-e | less\C-m"
 

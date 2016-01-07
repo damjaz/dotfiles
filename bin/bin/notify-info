@@ -2,6 +2,9 @@
 
 . ~/bin/color-scheme
 
+id='/tmp/notify-info-id'
+[[ ! -f $id ]] && echo 0 > $id
+
 battery_info() {
   local battery_dir battery_status charge_now charge_full percents
 
@@ -19,39 +22,40 @@ battery_info() {
 }
 
 # date and time
-notifybody="Time: <span color=\"\#$COL15\">$(date '+%H:%M')</span>\n"
+notifybody=$'<span font="Siji 8">\ue015</span>'" <span color=\"#$COL15\">$(date '+%H:%M')</span>"$'\n'
 day="$(date '+%a')"
-notifybody+="Date: ${day,,} <span color=\"\#$COL15\">$(date '+%-d %b')</span> $(date '+%Y')\n\n"
+notifybody+=$'<span font="Siji 8">\ue225</span>'" ${day,,} <span color=\"#$COL15\">$(date '+%-d %b')</span> $(date '+%Y')"$'\n\n'
 
 # volume
-vol=$(amixer sget Master | tail -n 1 | cut -d' ' -f6,8 | tr -d '[]')
+vol=$(amixer sget Master | tail -n 1 | cut -d' ' -f7,8 | tr -d '[]')
 case $vol in
-  *off) vol="<span color=\"\#$COL1\">${vol/off/muted}</span>"
+  *off) vol="<span color=\"#$COL1\">${vol/off/muted}</span>"
 esac
-notifybody+="Volume: $vol\n"
+notifybody+=$'<span font="Siji 8">\ue050</span>'" $vol"$'\n'
 
 # battery
 bat="$(battery_info)"
 case $bat in
-  *discharging*) bat="<span color=\"\#$COL1\">$bat</span>"
+  *discharging*) bat="<span color=\"#$COL1\">$bat</span>"
 esac
-notifybody+="Battery: $bat\n"
+notifybody+=$'<span font="Siji 8">\ue03f</span>'" $bat"$'\n'
 
 # wlan ssid
 ssid="$(sudo iwgetid -r)"
 if [[ "$ssid" ]]; then
   ssid+=" ($(sudo iwconfig wlan0 | grep 'Signal' | cut -d'=' -f3 | tr -d ' '))"
 else
-  ssid="<span color=\"\#$COL1\">not connected</span>"
+  ssid="<span color=\"#$COL1\">not connected</span>"
 fi
-notifybody+="Wi-Fi: $ssid\n\n"
+notifybody+=$'<span font="Siji 8">\ue0f0</span>'" $ssid"$'\n\n'
 
 # uptime
 uptime="$(uptime -p | cut -d' ' -f2-)"
 if [[ ! "$uptime" ]]; then
-  uptime="&lt; 1 minute"
+  uptime="&lt; 1m"
 fi
-notifybody+="Uptime: $uptime\n"
+uptime="${uptime//[^0-9dmh,]/}"
+notifybody+=$'<span font="Siji 8">\ue10d</span>'" ${uptime//,/ }"$'\n'
 
 # show notification
-notify-send -u normal " " "$notifybody"
+dunstify -p -r $(< $id) -u normal " " "$notifybody" > $id

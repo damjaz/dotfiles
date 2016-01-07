@@ -17,7 +17,7 @@ dmenu='dmenu -i -l 20 -p twitch.tv'
 openchat='yes'
 username='boltiedies'
 oauth='oauth:4uq0ff8an7wlxen2dauwkoz6ticngu'
-terminal='st -c dmenu-streams-chat'
+terminal='st -c dmenu-streams-chat -g 110x13+214+609'
 
 #
 # End of config
@@ -42,6 +42,7 @@ menu_games() {
     game="$($dmenu <<< "$games")"
     (( $? )) && break
 
+    # remove viewers number
     game="${game% *}"
     game="${game%"${game##*[![:space:]]}"}"
 
@@ -69,6 +70,34 @@ channel_open() {
   exec livestreamer -p "$player" "http://www.twitch.tv/${channel_name,,}" "$quality" >/dev/null 2>&1
 }
 
+menu_search_stream() {
+  local channel=''
+  local filter=$'.streams[] | "\(.channel.display_name)\t\(.viewers)\t\(.game)\t\(.channel.status)"'
+  local channels="$(twitch_request "/search/streams?q=${1// /%20}&limit=$limit" "$filter")"
+
+  while :; do
+    [[ ! "$channels" ]] && channels="Nothing found."
+    channel="$($dmenu <<< "$channels")"
+    (( $? )) && break
+
+    channel_open "$channel"
+  done
+}
+
+menu_search_games() {
+  local game=''
+  local filter=$'.games[] | "\(.name)"'
+  local games="$(twitch_request "/search/games?q=${1// /%20}&type=suggest&limit=$limit" "$filter")"
+
+  while :; do
+    [[ ! "$games" ]] && games="Nothing found."
+    game="$($dmenu <<< "$games")"
+    (( $? )) && break
+
+    menu_channels "&game=${game// /%20}"
+  done
+}
+
 menu_main() {
   local choice=''
 
@@ -79,6 +108,8 @@ menu_main() {
     case "$choice" in
       'Games') menu_games ;;
       'Channels') menu_channels ;;
+      's/'*) menu_search_stream "${choice#s/*}" ;;
+      'g/'*) menu_search_games "${choice#g/*}" ;;
       *) channel_open "$choice" ;;
     esac
   done

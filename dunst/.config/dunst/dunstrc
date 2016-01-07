@@ -1,4 +1,5 @@
 [global]
+    #font = "Terminus 8,-wuncon-siji-medium-r-normal--10-100-75-75-c-80-iso10646-1"
     font = Terminus 8
 
     # Allow a small subset of html markup in notifications and formats:

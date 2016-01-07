@@ -10,6 +10,6 @@ if [[ -f "$file" ]]; then
   page="$(< "$file")"
 fi
 
-page="$(mupdf-x11-curl "$1" "$page" 2>/dev/null)"
+page="$(mupdf-x11-curl "$1" "$page")"
 printf '%s' "$page" > "$file"
 

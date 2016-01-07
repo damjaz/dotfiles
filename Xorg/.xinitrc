@@ -20,6 +20,7 @@ xcape -e 'Caps_Lock=Escape' &
 #xmodmap -e 'keycode 71=' &
 
 xset +fp /usr/share/fonts/local
+xset +fp ~/.fonts
 xset fp rehash
 
 # touchpad
@@ -39,12 +40,21 @@ xinput set-prop 'ETPS/2 Elantech Touchpad' 'Device Accel Profile' -1 &
 
 # set random wallpaper
 #wallpaper-randomize &
+# lightning theme
+#setroot -z "$(shuf -n1 -e ~/images/wallpapers/lightning/*)"
 # set static wallpaper
 setroot -z ~/images/wallpapers/current &
 
 #root-tail -color "#983327" -fn "-*-terminus-medium-r-normal-*-12-*-*-*-*-*-*-*" -i 1 -g 600x20+140+610 <(while :; do date; sleep 1; done) &
 
+# night vision
 redshift &
+
+# reload rss feeds silently
+newsbeuter -x reload &
+
+# monitor battery power
+notify-battery &
 
 # hotkeys
 sxhkd > ~/.sxhkd.log 2>&1 &

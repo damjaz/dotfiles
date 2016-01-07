@@ -2,6 +2,9 @@
 
 . color-scheme
 
+id='/tmp/mpd-ctrl-id'
+[[ ! -f $id ]] && echo 0 > $id
+
 notify_current_song() {
   song="$(mpc currentsong)"
   local title='' album='' artist='' file='' msg=''
@@ -20,12 +23,14 @@ notify_current_song() {
     title="${title//&/&amp;}"
     artist="${artist//&/&amp;}"
     album="${album//&/&amp;}"
-    printf -v msg '<span color="#%s">%s</span>\n%s\n%s' "$COL3" "$title" "$artist" "$album"
+    printf -v msg $'<span font="Siji 8">\ue271</span>'' <span color="#%s">%s</span>\n   %s\n   %s' "$COL3" "$title" "$artist" "$album"
   else
-    printf -v msg '<span color="#%s">%s</span>\n%s' "$COL1" 'No tags' "${file//\//\/\\n}"
+    file="${file//&/&amp;}"
+    printf -v msg "${file//\///\\n}"
+    printf -v msg '<span color="#%s">%s</span>\n%s' "$COL1" "No tags" "$msg"
   fi
 
-  notify-send -u normal ' ' "$msg"
+  dunstify -p -r $(< $id) -u normal " " "$msg" > $id
 }
 
 case "$1" in
@@ -36,24 +41,33 @@ case "$1" in
         mpc play
         notify_current_song
         ;;
+
       pause) 
         mpc pause 0 
         notify_current_song
         ;;
+
       play) 
         mpc pause 1 
-        notify-send -u low ' ' '<span color="#'"$COL1"'">playback paused</span>'
+        dunstify -p -r $(< $id) -u low ' ' $'<span font="Siji 8">\ue04d</span> <span color="#'"$COL1"'">playback paused</span>' > $id
         ;;
     esac
     ;;
+
   next|previous)
     mpc "$1"
     notify_current_song
     ;;
+
   stop)
     mpc stop
-    notify-send -u low ' ' '<span color="#'"$COL1"'">playback stopped</span>'
+    dunstify -p -r $(< $id) -u low ' ' '<span color="#'"$COL1"'">playback stopped</span>' > $id
     ;;
+
+  nowplaying)
+    notify_current_song
+    ;;
+
   *)
     mpc "$*"
     ;;

@@ -158,8 +158,9 @@ nmap <silent> <leader>x :w<cr>:!chmod 755 %<cr>:e<cr>
 "nnoremap <C-p> :bp <CR>
 
 " tabs
-nnoremap <tab> :tabnew <CR>
+"nnoremap <tab> :tabnew <CR>
 
+nmap <silent> <leader>. :exec '!'.getline('.')<cr>
 
 " Use :w!! to save with sudo if you're editing a readonly file
 cmap w!! w !sudo tee % >/dev/null
